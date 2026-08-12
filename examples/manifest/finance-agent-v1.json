@@ -1,0 +1,117 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "agent_manifest",
+  "manifest_id": "amf_01HZK1A2B3C4D5E6F7G8H9J0K1",
+  "agent_name": "finance-agent",
+  "agent_namespace": "acme",
+  "version_label": "2026-03-01.prod.1",
+  "created_at": "2026-03-01T10:00:00Z",
+  "created_by": {
+    "type": "user",
+    "id": "stanley"
+  },
+  "parent_manifest_id": null,
+  "description": "Initial production release of the finance agent",
+  "status": "active",
+  "tags": [
+    "prod",
+    "finance",
+    "v1"
+  ],
+  "capabilities": {
+    "streaming": false,
+    "multi_turn": true,
+    "tool_use": true,
+    "structured_output": true,
+    "modalities": [
+      "text"
+    ]
+  },
+  "identity": {
+    "overall_hash": "sha256:47301b2558b2b0435a4be64132a37a66759898e8e0e4d044b1ca130c93267c9a",
+    "hash_algorithm": "jcs-sha256",
+    "source_commit": "git:a1b2c3d",
+    "build_id": "build_1001"
+  },
+  "contract": {
+    "prompt_stack": {
+      "system_prompt": {
+        "id": "prompt_system_finance",
+        "version": "8",
+        "hash": "sha256:aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa111aaa1"
+      },
+      "developer_prompt": {
+        "id": "prompt_dev_finance",
+        "version": "3",
+        "hash": "sha256:bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb222bbb2"
+      },
+      "prompt_assembly_version": "2",
+      "scratchpad_format_version": "1",
+      "reasoning_policy": "hidden"
+    },
+    "model_runtime": {
+      "provider": "google",
+      "model": "gemini-2.0-flash",
+      "model_config_hash": "sha256:ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc3",
+      "tool_calling_mode": "structured",
+      "runtime_version": "app-runtime@1.5.0",
+      "generation_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "max_tokens": 4096,
+        "response_format": "json_object"
+      }
+    },
+    "tool_registry": {
+      "registry_version": "5",
+      "registry_hash": "sha256:eee555eee555eee555eee555eee555eee555eee555eee555eee555eee555eee5",
+      "tools": [
+        {
+          "name": "get_market_cap",
+          "version": "1",
+          "hash": "sha256:f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+          "description": "Retrieve the current market capitalization for a given stock ticker.",
+          "input_schema_hash": "sha256:f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1",
+          "output_schema_hash": "sha256:f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1",
+          "stability": "stable"
+        },
+        {
+          "name": "search_population",
+          "version": "2",
+          "hash": "sha256:f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2",
+          "description": "Search for population data by country or region.",
+          "input_schema_hash": "sha256:f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2f2a2",
+          "output_schema_hash": "sha256:f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2f2b2",
+          "stability": "stable"
+        }
+      ]
+    },
+    "workflow": {
+      "graph_name": "finance-simple-graph",
+      "graph_version": "3",
+      "graph_hash": "sha256:ggg777ggg777ggg777ggg777ggg777ggg777ggg777ggg777ggg777ggg777ggg7",
+      "routing_policy_version": "2"
+    },
+    "subagents": [],
+    "output_contract": {
+      "version": "2",
+      "schema_hash": "sha256:hhh888hhh888hhh888hhh888hhh888hhh888hhh888hhh888hhh888hhh888hhh8",
+      "format": "text",
+      "strict": false,
+      "modalities": [
+        "text"
+      ]
+    },
+    "guardrails": {
+      "bundle_version": "3",
+      "bundle_hash": "sha256:iii999iii999iii999iii999iii999iii999iii999iii999iii999iii999iii9"
+    },
+    "context_config": {
+      "retrieval_config_version": "5",
+      "retrieval_config_hash": "sha256:jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj0",
+      "memory_policy_version": "1",
+      "context_packing_version": "2"
+    }
+  },
+  "extensions": {}
+}

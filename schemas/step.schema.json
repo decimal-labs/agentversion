@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/step.schema.json",
+  "title": "Step",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "kind",
+    "step_id",
+    "episode_id",
+    "index",
+    "step_type"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "step"
+    },
+    "step_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "episode_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "index": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "step_type": {
+      "type": "string",
+      "enum": [
+        "llm_call",
+        "tool_call",
+        "router_decision",
+        "subagent_handoff",
+        "validator_check",
+        "memory_read",
+        "memory_write",
+        "retrieval",
+        "system_event"
+      ]
+    },
+    "started_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "ended_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "actor": {
+      "type": ["object", "null"],
+      "properties": {
+        "type": { "type": "string" },
+        "name": { "type": ["string", "null"] }
+      }
+    },
+    "input": {
+      "type": ["object", "null"],
+      "properties": {
+        "messages": {
+          "type": ["array", "null"],
+          "items": { "$ref": "#/$defs/message" }
+        }
+      }
+    },
+    "output": {
+      "type": ["object", "null"],
+      "properties": {
+        "tool_call": {
+          "type": ["object", "null"],
+          "properties": {
+            "name": { "type": "string" },
+            "arguments": { "type": "object" }
+          }
+        },
+        "text": { "type": ["string", "null"] }
+      }
+    },
+    "schema_refs": {
+      "type": ["object", "null"],
+      "properties": {
+        "tool_input_schema_hash": { "type": ["string", "null"] },
+        "tool_output_schema_hash": { "type": ["string", "null"] }
+      }
+    },
+    "observability_refs": {
+      "type": ["object", "null"],
+      "properties": {
+        "otel_trace_id": { "type": ["string", "null"] },
+        "otel_span_id": { "type": ["string", "null"] },
+        "source_url": { "type": ["string", "null"] }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "default": {}
+    }
+  },
+  "$defs": {
+    "message": {
+      "type": "object",
+      "required": ["role"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["system", "developer", "user", "assistant", "tool"]
+        },
+        "content": { "type": ["string", "null"] },
+        "content_ref": { "type": ["string", "null"] },
+        "name": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

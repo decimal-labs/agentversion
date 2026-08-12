@@ -1,0 +1,21 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "manifest_diff",
+  "old_manifest_id": "amf_v1",
+  "new_manifest_id": "amf_v2",
+  "changed_surfaces": [
+    {
+      "surface": "subagents",
+      "change_type": "breaking",
+      "severity": "minor",
+      "details": [
+        "billing contents changed"
+      ]
+    }
+  ],
+  "summary": {
+    "breaking_surfaces": 1,
+    "non_breaking_surfaces": 0,
+    "max_severity": "minor"
+  }
+}

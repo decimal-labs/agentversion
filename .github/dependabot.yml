@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+    ignore:
+      # Skip MAJOR github-actions bumps — they churn and break
+      # (actions/checkout@v7 broke docs CI). Take majors deliberately and tested;
+      # minor/patch (including security) updates still auto-PR.
+      #
+      # `ignore` must stay nested under this entry. It is not a valid top-level key,
+      # and a single unrecognised top-level key makes Dependabot reject the file as a
+      # whole — silently, with no PR and no error anywhere you would look. Nothing
+      # then maintains the action SHA pins in .github/workflows/publish.yml, which is
+      # the job this config exists to do.
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

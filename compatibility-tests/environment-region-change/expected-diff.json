@@ -1,0 +1,21 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "manifest_diff",
+  "old_manifest_id": "amf_v1",
+  "new_manifest_id": "amf_v2",
+  "changed_surfaces": [
+    {
+      "surface": "environment",
+      "change_type": "non_breaking",
+      "severity": "moderate",
+      "details": [
+        "region: 'us-east-1' \u2192 'eu-west-1'"
+      ]
+    }
+  ],
+  "summary": {
+    "breaking_surfaces": 0,
+    "non_breaking_surfaces": 1,
+    "max_severity": "moderate"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/replay-result.schema.json",
+  "title": "Replay Result",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "kind",
+    "replay_job_id",
+    "status",
+    "target_manifest_id"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "replay_result"
+    },
+    "replay_job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "running", "completed", "failed", "cancelled"]
+    },
+    "target_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "replayed_episode_id": {
+      "type": ["string", "null"]
+    },
+    "replayability": {
+      "type": ["string", "null"],
+      "enum": ["fully_replayable", "partially_replayable", "not_replayable", null]
+    },
+    "runtime_metadata": {
+      "type": ["object", "null"],
+      "properties": {
+        "executor_type": { "type": ["string", "null"] },
+        "executor_version": { "type": ["string", "null"] }
+      }
+    },
+    "comparison_summary": {
+      "type": ["object", "null"],
+      "description": "Difference between original episode and replay. Booleans answer 'did it change?'; deltas answer 'by how much?'. See spec/replay.md.",
+      "properties": {
+        "final_output_changed": { "type": ["boolean", "null"] },
+        "final_output_diff_pct": {
+          "type": ["number", "null"], "minimum": 0, "maximum": 100,
+          "description": "Percentage difference (0-100) between original and replay outputs."
+        },
+        "tool_path_changed": { "type": ["boolean", "null"] },
+        "tool_path_diff": {
+          "type": ["object", "null"],
+          "properties": {
+            "steps_added":   { "type": "array", "items": { "type": "string" }, "default": [] },
+            "steps_removed": { "type": "array", "items": { "type": "string" }, "default": [] },
+            "first_divergence_step_index": { "type": ["integer", "null"], "minimum": 0 }
+          }
+        },
+        "output_contract_valid": { "type": ["boolean", "null"] },
+        "step_count_delta":  { "type": ["integer", "null"] },
+        "latency_delta_ms":  { "type": ["integer", "null"] },
+        "cost_delta_usd":    { "type": ["number", "null"] },
+        "eval_score_delta":  { "type": ["number", "null"] }
+      }
+    },
+    "completed_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    }
+  }
+}

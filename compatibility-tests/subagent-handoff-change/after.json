@@ -1,0 +1,53 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "agent_manifest",
+  "manifest_id": "amf_v2",
+  "agent_name": "demo",
+  "version_label": "v2",
+  "created_at": "2026-05-12T00:00:00Z",
+  "identity": {
+    "overall_hash": "sha256:d58bcc5f8f2a68c9938f99f8586040848fa3c02f2f6731fa1d4bd287aa18e9ce",
+    "hash_algorithm": "jcs-sha256"
+  },
+  "contract": {
+    "prompt_stack": {
+      "reasoning_policy": "hidden"
+    },
+    "model_runtime": {
+      "provider": "openai",
+      "model": "gpt-4o"
+    },
+    "tool_registry": {
+      "registry_version": "1",
+      "registry_hash": "sha256:reg",
+      "tools": [
+        {
+          "name": "search",
+          "version": "1",
+          "hash": "sha256:s1",
+          "input_schema_hash": "sha256:si1",
+          "output_schema_hash": "sha256:so1"
+        }
+      ]
+    },
+    "workflow": {
+      "graph_name": "g",
+      "graph_version": "1"
+    },
+    "subagents": [
+      {
+        "name": "billing",
+        "version": "2",
+        "hash": "sha256:b1",
+        "handoff_schema_hash": "sha256:h2"
+      }
+    ],
+    "output_contract": {
+      "version": "1",
+      "schema_hash": "sha256:o1",
+      "format": "text",
+      "strict": false
+    }
+  },
+  "extensions": {}
+}

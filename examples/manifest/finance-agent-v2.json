@@ -1,0 +1,236 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "agent_manifest",
+  "manifest_id": "amf_01KREPJH261Z60FKW1HRAZK6P4",
+  "agent_name": "finance-agent",
+  "agent_namespace": "acme",
+  "version_label": "2026-03-10.prod.4",
+  "created_at": "2026-03-10T15:30:00Z",
+  "created_by": {
+    "type": "user",
+    "id": "stanley"
+  },
+  "parent_manifest_id": "amf_01HZK1A2B3C4D5E6F7G8H9J0K1",
+  "description": "Adds finance subagent, renames search tool, switches to strict JSON output",
+  "status": "active",
+  "tags": [
+    "prod",
+    "finance",
+    "json-output",
+    "v2"
+  ],
+  "capabilities": {
+    "streaming": false,
+    "multi_turn": true,
+    "tool_use": true,
+    "structured_output": true,
+    "modalities": [
+      "text"
+    ]
+  },
+  "identity": {
+    "overall_hash": "sha256:767ebff1d3d991c90d70969c34f87b3fb5c6064180f9763947653562136c9dda",
+    "hash_algorithm": "jcs-sha256",
+    "source_commit": "git:8f3b2c1",
+    "build_id": "build_1234"
+  },
+  "contract": {
+    "prompt_stack": {
+      "system_prompt": {
+        "id": "prompt_system_finance",
+        "version": "12",
+        "hash": "sha256:aaa222aaa222aaa222aaa222aaa222aaa222aaa222aaa222aaa222aaa222aaa2"
+      },
+      "developer_prompt": {
+        "id": "prompt_dev_finance",
+        "version": "4",
+        "hash": "sha256:bbb333bbb333bbb333bbb333bbb333bbb333bbb333bbb333bbb333bbb333bbb3"
+      },
+      "prompt_assembly_version": "2",
+      "scratchpad_format_version": "1",
+      "reasoning_policy": "hidden"
+    },
+    "model_runtime": {
+      "provider": "openai",
+      "model": "gpt-5.4",
+      "model_config_hash": "sha256:ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc333ccc3",
+      "tool_calling_mode": "structured",
+      "runtime_version": "app-runtime@1.8.2",
+      "generation_config": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "max_tokens": 4096,
+        "response_format": "json_object"
+      },
+      "envelope": {
+        "context_window_tokens": 128000,
+        "expected_latency_ms_p50": 1200,
+        "expected_latency_ms_p99": 8000,
+        "cost": {
+          "input_per_1k_tokens_usd": 0.0025,
+          "output_per_1k_tokens_usd": 0.01
+        },
+        "rate_limit": {
+          "rpm": 500,
+          "tpm": 800000
+        }
+      }
+    },
+    "tool_registry": {
+      "registry_version": "7",
+      "registry_hash": "sha256:eee666eee666eee666eee666eee666eee666eee666eee666eee666eee666eee6",
+      "tools": [
+        {
+          "name": "get_market_cap",
+          "version": "1",
+          "hash": "sha256:f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+          "description": "Retrieve the current market capitalization for a given stock ticker.",
+          "input_schema_hash": "sha256:f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1f1a1",
+          "output_schema_hash": "sha256:f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1f1b1",
+          "stability": "stable",
+          "semantic_version": "2.1.0",
+          "implementation_ref": "git:8f3b2c1@tools/get_market_cap.py"
+        },
+        {
+          "name": "get_population",
+          "version": "1",
+          "hash": "sha256:f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3f3",
+          "description": "Retrieve population data for a given country or region.",
+          "input_schema_hash": "sha256:f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3f3a3",
+          "output_schema_hash": "sha256:f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3f3b3",
+          "stability": "stable"
+        },
+        {
+          "name": "write_spreadsheet_cell",
+          "version": "3",
+          "hash": "sha256:f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4f4",
+          "description": "Write a value to a specific cell in a spreadsheet.",
+          "input_schema_hash": "sha256:f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4f4a4",
+          "output_schema_hash": "sha256:f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4f4b4",
+          "stability": "stable",
+          "annotations": {
+            "destructive": true,
+            "requires_confirmation": true,
+            "read_only_hint": false
+          }
+        }
+      ]
+    },
+    "workflow": {
+      "graph_name": "finance-router-graph",
+      "graph_version": "6",
+      "graph_hash": "sha256:ggg888ggg888ggg888ggg888ggg888ggg888ggg888ggg888ggg888ggg888ggg8",
+      "routing_policy_version": "4"
+    },
+    "subagents": [
+      {
+        "name": "finance_subagent",
+        "version": "3",
+        "hash": "sha256:kkk111kkk111kkk111kkk111kkk111kkk111kkk111kkk111kkk111kkk111kkk1",
+        "manifest_ref": "agentversion:manifest:amf_01KREPJH26NYJG0BW6DEVM7WT7",
+        "handoff_schema_hash": "sha256:kkk1a1kkk1a1kkk1a1kkk1a1kkk1a1kkk1a1kkk1a1kkk1a1kkk1a1kkk1a1kkk1"
+      },
+      {
+        "name": "spreadsheet_subagent",
+        "version": "2",
+        "hash": "sha256:kkk222kkk222kkk222kkk222kkk222kkk222kkk222kkk222kkk222kkk222kkk2",
+        "manifest_ref": "agentversion:manifest:amf_01KREPJH26VKWHR46H4XKXH958",
+        "handoff_schema_hash": "sha256:kkk2a2kkk2a2kkk2a2kkk2a2kkk2a2kkk2a2kkk2a2kkk2a2kkk2a2kkk2a2kkk2"
+      }
+    ],
+    "output_contract": {
+      "version": "3",
+      "schema_hash": "sha256:hhh999hhh999hhh999hhh999hhh999hhh999hhh999hhh999hhh999hhh999hhh9",
+      "format": "json",
+      "strict": true,
+      "modalities": [
+        "text"
+      ]
+    },
+    "guardrails": {
+      "bundle_version": "3",
+      "bundle_hash": "sha256:iii999iii999iii999iii999iii999iii999iii999iii999iii999iii999iii9"
+    },
+    "context_config": {
+      "retrieval_config_version": "5",
+      "retrieval_config_hash": "sha256:jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj000jjj0",
+      "memory_policy_version": "1",
+      "context_packing_version": "2"
+    },
+    "environment": {
+      "deployment_id": "prod-east-1",
+      "region": "us-east-1",
+      "infra_image_hash": "sha256:img2img2img2img2img2img2img2img2img2img2img2img2img2img2img2img2",
+      "runtime_versions": {
+        "python": "3.12.5",
+        "app-runtime": "1.8.2"
+      },
+      "external_service_pins": {
+        "openai": "https://api.openai.com/v1@2024-10-01"
+      },
+      "resource_limits": {
+        "memory_mb": 2048,
+        "timeout_seconds": 120
+      }
+    }
+  },
+  "lifecycle": {
+    "current_stage": "production",
+    "history": [
+      {
+        "stage": "draft",
+        "transitioned_at": "2026-03-01T10:00:00Z",
+        "by": "user:stanley"
+      },
+      {
+        "stage": "candidate",
+        "transitioned_at": "2026-03-05T14:00:00Z",
+        "by": "system:ci-pipeline",
+        "eval_ref": "regression-suite"
+      },
+      {
+        "stage": "staging",
+        "transitioned_at": "2026-03-07T09:00:00Z",
+        "by": "system:deployer",
+        "approved_by": ["user:eng-on-call"]
+      },
+      {
+        "stage": "production",
+        "transitioned_at": "2026-03-10T15:30:00Z",
+        "by": "system:release-bot",
+        "approved_by": ["user:stanley", "user:eng-on-call"],
+        "notes": "Promoted after 3-day soak in staging."
+      }
+    ],
+    "supersedes": ["amf_01HZK1A2B3C4D5E6F7G8H9J0K1"]
+  },
+  "evaluation": {
+    "gates": [
+      {
+        "name": "regression-suite",
+        "dataset_ref": "dss_01HZK1A2B3C4D5E6F7G8H9J0K1",
+        "threshold": 0.95,
+        "actual_score": 0.972,
+        "passed": true,
+        "ran_at": "2026-03-05T14:00:00Z"
+      },
+      {
+        "name": "safety-eval",
+        "dataset_ref": "dss_01HZK1A2B3C4D5E6F7G8H9J0K2",
+        "threshold": 0.99,
+        "actual_score": 0.991,
+        "passed": true,
+        "ran_at": "2026-03-05T14:05:00Z"
+      },
+      {
+        "name": "latency-p99-ms",
+        "threshold": 5000,
+        "actual_score": 4180,
+        "threshold_direction": "max",
+        "passed": true,
+        "ran_at": "2026-03-05T14:10:00Z"
+      }
+    ]
+  },
+  "extensions": {}
+}

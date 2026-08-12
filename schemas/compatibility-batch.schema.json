@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/compatibility-batch.schema.json",
+  "title": "Compatibility Batch",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "kind",
+    "batch_id",
+    "old_manifest_id",
+    "target_manifest_id",
+    "created_at",
+    "summary",
+    "classification_rules"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "compatibility_batch"
+    },
+    "batch_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "old_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "diff_ref": {
+      "type": ["string", "null"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_episodes", "keep", "repair", "replay", "drop"],
+      "properties": {
+        "total_episodes": { "type": "integer", "minimum": 0 },
+        "keep": { "type": "integer", "minimum": 0 },
+        "repair": { "type": "integer", "minimum": 0 },
+        "replay": { "type": "integer", "minimum": 0 },
+        "drop": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "classification_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "condition", "decision", "matched_count"],
+        "properties": {
+          "rule_id": { "type": "string" },
+          "condition": {
+            "type": "string",
+            "description": "Predefined condition tokens joined by AND/OR operators."
+          },
+          "decision": {
+            "type": "string",
+            "enum": ["keep", "repair", "replay", "drop"]
+          },
+          "reason_codes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "repair_strategy": {
+            "type": ["string", "null"],
+            "enum": ["rename_field", "remove_field", "convert_format", "schema_migration", "custom", null]
+          },
+          "matched_count": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "episode_decisions_ref": {
+      "type": ["string", "null"]
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/compatibility-decision.schema.json",
+  "title": "Compatibility Decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "kind",
+    "decision_id",
+    "subject",
+    "old_manifest_id",
+    "target_manifest_id",
+    "decision",
+    "reason_codes",
+    "created_at"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "compatibility_decision"
+    },
+    "decision_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["task", "episode", "step", "dataset_item"]
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "old_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "target_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decision": {
+      "type": "string",
+      "enum": ["keep", "repair", "replay", "drop"]
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "tool_missing",
+          "tool_schema_incompatible",
+          "tool_semantics_changed",
+          "skill_missing",
+          "skill_content_changed",
+          "prompt_policy_changed",
+          "prompt_format_changed",
+          "model_runtime_changed",
+          "workflow_surface_changed",
+          "subagent_interface_changed",
+          "output_contract_changed",
+          "guardrail_policy_changed",
+          "behavioral_policy_changed",
+          "context_config_changed",
+          "region_changed",
+          "infra_image_changed",
+          "external_service_pin_changed",
+          "runtime_version_changed",
+          "environment_unreplayable",
+          "missing_artifacts",
+          "insufficient_confidence"
+        ]
+      }
+    },
+    "details": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "summary": { "type": ["string", "null"] },
+        "confidence": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "repair_plan": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "strategy": { "type": ["string", "null"] },
+        "transform_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "replay_plan": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "replayability": {
+          "type": ["string", "null"],
+          "enum": ["fully_replayable", "partially_replayable", "not_replayable", null]
+        },
+        "required_context": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
