@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/dataset-snapshot.schema.json",
+  "title": "Dataset Snapshot",
+  "type": "object",
+  "required": [
+    "spec_version",
+    "kind",
+    "snapshot_id",
+    "name",
+    "dataset_type",
+    "created_at"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "dataset_snapshot"
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataset_type": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "selection_policy": {
+      "type": ["object", "null"],
+      "properties": {
+        "source_types": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "required_episode_status": { "type": ["string", "null"] },
+        "required_policy_compliance": { "type": ["boolean", "null"] },
+        "pii_states": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["raw", "redacted", "synthetic", "none"]
+          },
+          "default": [],
+          "description": "Filter: only include episodes whose data_classification.pii_state is in this list (empty = no filter)."
+        }
+      }
+    },
+    "item_refs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["task_id"],
+        "properties": {
+          "task_id": { "type": "string" },
+          "episode_id": { "type": ["string", "null"] },
+          "step_id": { "type": ["string", "null"] }
+        }
+      },
+      "default": []
+    },
+    "lineage": {
+      "type": ["object", "null"],
+      "properties": {
+        "source_snapshot_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "built_from_manifest_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        }
+      }
+    },
+    "data_classification": {
+      "type": ["object", "null"],
+      "description": "Compliance labels for PII handling, retention, residency. See spec/data-classification.md §3n.",
+      "properties": {
+        "pii_state": {
+          "type": "string",
+          "enum": ["raw", "redacted", "synthetic", "none"],
+          "default": "none"
+        },
+        "retention_days": { "type": ["integer", "null"], "minimum": 1 },
+        "residency": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "redaction_policy_ref": { "type": ["string", "null"] },
+        "consent_basis": {
+          "type": ["string", "null"],
+          "enum": [
+            "consent", "contract", "legitimate_interest",
+            "legal_obligation", "vital_interest", "public_task",
+            null
+          ]
+        }
+      }
+    }
+  }
+}

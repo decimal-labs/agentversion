@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/compatibility-report.schema.json",
+  "title": "Compatibility Report",
+  "description": "Summary of a manifest diff's impact on existing data — produced by classify_compatibility(diff).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "kind",
+    "old_manifest_id",
+    "new_manifest_id",
+    "recommended_decision"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "compatibility_report"
+    },
+    "old_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "new_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "recommended_decision": {
+      "type": "string",
+      "enum": ["keep", "repair", "replay", "drop"]
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "breaking_surfaces": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "non_breaking_surfaces": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "summary": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}

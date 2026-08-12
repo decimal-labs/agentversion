@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/replay-job.schema.json",
+  "title": "Replay Job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "kind",
+    "replay_job_id",
+    "task_id",
+    "target_manifest_id",
+    "mode",
+    "priority",
+    "replay_input",
+    "created_at"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "replay_job"
+    },
+    "replay_job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_episode_id": {
+      "type": ["string", "null"]
+    },
+    "target_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["customer_runtime", "offline_batch", "analysis_only"]
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "normal", "high", "urgent"]
+    },
+    "replay_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["messages"],
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/message" }
+        },
+        "conversation_history": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/message" },
+          "default": []
+        },
+        "attachments": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/attachment" },
+          "default": []
+        },
+        "context_refs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "determinism": {
+          "type": ["object", "null"],
+          "description": "Reproducibility knobs. See spec/replay-determinism.md §3f.",
+          "additionalProperties": false,
+          "properties": {
+            "random_seed": { "type": ["integer", "null"] },
+            "clock_freeze_at": { "type": ["string", "null"], "format": "date-time" },
+            "tool_response_pinning_ref": { "type": ["string", "null"] }
+          }
+        }
+      }
+    },
+    "constraints": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "timeout_seconds": { "type": ["integer", "null"], "minimum": 1 },
+        "max_cost_usd": { "type": ["number", "null"], "minimum": 0 },
+        "allow_network": { "type": ["boolean", "null"] }
+      }
+    },
+    "requested_outputs": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "include_full_trace": { "type": "boolean" },
+        "include_step_artifacts": { "type": "boolean" },
+        "include_final_output": { "type": "boolean" }
+      }
+    },
+    "lineage": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "properties": {
+        "requested_from_episode_id": { "type": ["string", "null"] }
+      }
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role"],
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": ["system", "developer", "user", "assistant", "tool"]
+        },
+        "content": { "type": ["string", "null"] },
+        "content_ref": { "type": ["string", "null"] },
+        "name": { "type": ["string", "null"] }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attachment_id"],
+      "properties": {
+        "attachment_id": { "type": "string" },
+        "uri": { "type": ["string", "null"] },
+        "mime_type": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

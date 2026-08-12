@@ -1,0 +1,21 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "manifest_diff",
+  "old_manifest_id": "amf_v1",
+  "new_manifest_id": "amf_v2",
+  "changed_surfaces": [
+    {
+      "surface": "model_runtime",
+      "change_type": "breaking",
+      "severity": "major",
+      "details": [
+        "provider: 'openai' \u2192 'anthropic'"
+      ]
+    }
+  ],
+  "summary": {
+    "breaking_surfaces": 1,
+    "non_breaking_surfaces": 0,
+    "max_severity": "major"
+  }
+}

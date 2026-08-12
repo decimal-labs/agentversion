@@ -1,0 +1,126 @@
+{
+  "_README": [
+    "FROZEN HASH VECTORS - anti-drift guard for the manifest-aware versioning moat.",
+    "Each entry is a representative `contract` input plus its `overall_hash` computed",
+    "ONCE by the current hashing pipeline (agentversion/hasher.py :: hash_manifest,",
+    "algorithm jcs-sha256). tests/test_frozen_hash_vectors.py asserts hash_manifest(input)",
+    "still equals these literals. Unlike the self-referential example-manifest test, these",
+    "literals do NOT flow through the current code, so a silent canonicalization or",
+    "quantization change is caught here.",
+    "IF THIS TEST FAILS: a change altered the hash output. That is a BREAKING change to",
+    "the moat (every previously-stored overall_hash would no longer reproduce). Do NOT just",
+    "regenerate these vectors to make the test green. Either revert the change, or, if the",
+    "algorithm change is deliberate, bump the hash/format version (identity.hash_algorithm,",
+    "currently 'jcs-sha256') and regenerate these vectors as part of that intentional",
+    "breaking release. See spec/hashing.md.",
+    "Regenerate (only when intentional): see the docstring in test_frozen_hash_vectors.py."
+  ],
+  "vectors": {
+    "minimal_contract": {
+      "description": "Baseline: three plain surfaces, no quantization or stripping.",
+      "input": {
+        "contract": {
+          "prompt_stack": {
+            "reasoning_policy": "hidden",
+            "prompt_assembly_version": "1"
+          },
+          "model_runtime": {
+            "provider": "google",
+            "model": "gemini-2.0-flash"
+          },
+          "output_contract": {
+            "version": "1",
+            "schema_hash": "sha256:abc",
+            "format": "text",
+            "strict": false
+          }
+        }
+      },
+      "overall_hash": "sha256:0ad0d463dbccd5266c5a9054f8b101df5b4363fcb5122f73953e31a8f3777fb1"
+    },
+    "float_quantization": {
+      "description": "generation_config float quantization (temperature 0.71->0.7, top_p 0.92->0.90) is part of the hashed identity.",
+      "input": {
+        "contract": {
+          "model_runtime": {
+            "provider": "google",
+            "model": "gemini-2.0-flash",
+            "generation_config": {
+              "temperature": 0.71,
+              "top_p": 0.92,
+              "max_tokens": 4096
+            }
+          }
+        }
+      },
+      "overall_hash": "sha256:b516c262893bbdcd9a8a0ea5a7cf670ad7d26feb29767e6e239a1a212806be63"
+    },
+    "runtime_only_stripping": {
+      "description": "Runtime-only keys (max_retries/timeout/batch_size) are stripped before hashing, at both the surface and generation_config level.",
+      "input": {
+        "contract": {
+          "model_runtime": {
+            "provider": "openai",
+            "model": "gpt-5",
+            "max_retries": 7,
+            "timeout": 30,
+            "batch_size": 16,
+            "generation_config": {
+              "temperature": 0.0,
+              "max_retries": 9,
+              "timeout": 5
+            }
+          }
+        }
+      },
+      "overall_hash": "sha256:a0dd07a760b4e86400725d9d6580a01668aa0d65c180e022284755b98c58d74a"
+    },
+    "skill_registry": {
+      "description": "The skills moat surface participates in overall_hash (skills hashed as-is, no quantization).",
+      "input": {
+        "contract": {
+          "prompt_stack": {
+            "reasoning_policy": "visible"
+          },
+          "model_runtime": {
+            "provider": "anthropic",
+            "model": "claude"
+          },
+          "skill_registry": {
+            "registry_version": "3",
+            "registry_hash": "sha256:reg3",
+            "skills": [
+              {
+                "name": "sql-analytics-conventions",
+                "hash": "sha256:s1"
+              },
+              {
+                "name": "secret-scanner",
+                "hash": "sha256:s2"
+              }
+            ]
+          }
+        }
+      },
+      "overall_hash": "sha256:55caccb8ec89a22d9ee2a3fc690b9b02b17a5accf3714a3271afae880e8e9c24"
+    },
+    "unicode_and_key_order": {
+      "description": "JCS canonicalization: Unicode/UTF-8 string handling and alphabetical key sorting (keys are intentionally shuffled in the input).",
+      "input": {
+        "contract": {
+          "model_runtime": {
+            "model": "gemini",
+            "provider": "google",
+            "note": "café · 北京 · é"
+          },
+          "prompt_stack": {
+            "z_last": 1,
+            "a_first": 2,
+            "reasoning_policy": "hidden"
+          }
+        }
+      },
+      "overall_hash": "sha256:658fe7ddee367bc69635909cbf5fb7e4e1add1fe9e5627102466aa33c3f97997"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentversion"
+version = "0.2.2"
+description = "An open specification for versioning agent runtimes and keeping datasets valid."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10"
+authors = [
+    { name = "Decimal AI" },
+]
+keywords = ["agent", "version", "spec", "agentversion", "versioning", "drift", "compatibility", "llm", "ai"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "pydantic>=2.0",
+    "click>=8.0",
+    "rich>=13.0",
+    # Upper-pinned: jcs does the RFC 8785 canonicalization that every overall_hash
+    # is built on; a major bump could change canonicalization and silently break
+    # every stored hash (canonicalization stability = hash stability = the moat).
+    "jcs>=0.2,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.15,<0.16",
+    "mypy>=1.0,<2.2",
+    "jsonschema>=4.0",
+]
+
+[project.scripts]
+agentversion = "agentversion.cli:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agentversion"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"agentversion/py.typed" = "agentversion/py.typed"
+# Bundle the JSON schemas in the wheel so SDK / 3rd-party consumers can
+# validate agent_manifest / compatibility / dataset docs without cloning the repo.
+"schemas" = "agentversion/schemas"
+# Bundle the human-facing spec, the runnable examples, and the conformance corpus
+# so a `pip install`ed user actually has the files the README points at (the docs
+# claim they ship in the wheel — keep that true).
+"spec" = "agentversion/spec"
+"examples" = "agentversion/examples"
+"compatibility-tests" = "agentversion/compatibility-tests"
+
+[project.urls]
+Homepage = "https://github.com/decimal-labs/agentversion"
+Documentation = "https://github.com/decimal-labs/agentversion/tree/main/spec"
+Repository = "https://github.com/decimal-labs/agentversion"
+Issues = "https://github.com/decimal-labs/agentversion/issues"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+# Intentionally tolerated (mirrors the prior CI scope / decimalai-python
+# convention): line length, late imports, and the unused-name checks that
+# fire on deliberate patterns in this codebase.
+ignore = ["E501", "E402", "F821", "F841"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+
+[[tool.mypy.overrides]]
+module = "jcs"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "jsonschema"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Coverage gate: suite measures 94% (line+branch) on the clean tree; the gate
+# is pinned to 90 (deliberate headroom, so the build stays
+# green now and can be ratcheted up as coverage tightens).
+addopts = "-v --tb=short --cov=agentversion --cov-branch --cov-fail-under=90"

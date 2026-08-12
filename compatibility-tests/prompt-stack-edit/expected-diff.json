@@ -1,0 +1,21 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "manifest_diff",
+  "old_manifest_id": "amf_v1",
+  "new_manifest_id": "amf_v2",
+  "changed_surfaces": [
+    {
+      "surface": "prompt_stack",
+      "change_type": "non_breaking",
+      "severity": "moderate",
+      "details": [
+        "system_prompt hash changed"
+      ]
+    }
+  ],
+  "summary": {
+    "breaking_surfaces": 0,
+    "non_breaking_surfaces": 1,
+    "max_severity": "moderate"
+  }
+}

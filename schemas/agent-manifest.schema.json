@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/agent-manifest.schema.json",
+  "title": "Agent Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "agent_name",
+    "version_label",
+    "created_at",
+    "identity",
+    "contract"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "agent_manifest"
+    },
+    "manifest_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9]*_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "Canonical form: '<kind-prefix>_<26-char Crockford-base32 ULID>'. Example: 'amf_01HZK1A2B3C4D5E6F7G8H9J0K1'. (v0.x permissive slug form was removed in v1.0 — see spec/ids.md.)"
+    },
+    "agent_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_namespace": {
+      "type": ["string", "null"]
+    },
+    "version_label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "created_by": {
+      "type": ["object", "null"],
+      "properties": {
+        "type": { "type": "string" },
+        "id": { "type": "string" }
+      },
+      "required": ["type", "id"]
+    },
+    "parent_manifest_id": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z][a-z0-9]*_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "description": {
+      "type": ["string", "null"]
+    },
+    "status": {
+      "type": ["string", "null"],
+      "enum": ["draft", "active", "deprecated", "archived", null]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": []
+    },
+    "capabilities": {
+      "type": ["object", "null"],
+      "description": "Optional capability declarations (e.g. streaming, multi_turn, modalities)."
+    },
+    "identity": {
+      "type": "object",
+      "required": ["overall_hash"],
+      "properties": {
+        "overall_hash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "default": "jcs-sha256"
+        },
+        "source_commit": {
+          "type": ["string", "null"]
+        },
+        "build_id": {
+          "type": ["string", "null"]
+        },
+        "yanked_at": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When this manifest was yanked (deprecated for new use; existing references still resolve)."
+        },
+        "yanked_reason": {
+          "type": ["string", "null"]
+        },
+        "attestations": {
+          "type": "array",
+          "description": "Cryptographic attestations over overall_hash. See spec/attestation.md §3d.",
+          "items": {
+            "type": "object",
+            "required": ["signer", "algorithm", "signature", "signed_payload_hash", "signed_at"],
+            "properties": {
+              "signer": { "type": "string", "minLength": 1 },
+              "algorithm": { "type": "string", "minLength": 1 },
+              "signature": { "type": "string", "minLength": 1 },
+              "signed_payload_hash": { "type": "string", "minLength": 1 },
+              "signed_at": { "type": "string", "format": "date-time" },
+              "key_id": { "type": ["string", "null"] },
+              "expires_at": { "type": ["string", "null"], "format": "date-time" }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "required": [
+        "prompt_stack",
+        "model_runtime",
+        "tool_registry",
+        "workflow",
+        "output_contract"
+      ],
+      "properties": {
+        "prompt_stack": {
+          "type": "object",
+          "properties": {
+            "system_prompt": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/versionedRef" }] },
+            "developer_prompt": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/versionedRef" }] },
+            "prompt_assembly_version": { "type": ["string", "null"] },
+            "scratchpad_format_version": { "type": ["string", "null"] },
+            "reasoning_policy": {
+              "type": ["string", "null"],
+              "enum": ["hidden", "visible", "none", null]
+            }
+          }
+        },
+        "model_runtime": {
+          "type": "object",
+          "required": ["provider", "model"],
+          "properties": {
+            "provider": { "type": "string" },
+            "model": { "type": "string" },
+            "model_config_hash": { "type": ["string", "null"] },
+            "tool_calling_mode": { "type": ["string", "null"] },
+            "runtime_version": { "type": ["string", "null"] },
+            "generation_config": {
+              "type": ["object", "null"],
+              "properties": {
+                "temperature": { "type": ["number", "null"] },
+                "top_p": { "type": ["number", "null"] },
+                "max_tokens": { "type": ["integer", "null"] },
+                "response_format": { "type": ["string", "null"] }
+              }
+            },
+            "envelope": {
+              "type": ["object", "null"],
+              "description": "Operational envelope: context window, latency, cost, rate limit. Anchors replay constraint logic. See spec/manifest.md.",
+              "properties": {
+                "context_window_tokens": { "type": ["integer", "null"], "minimum": 1 },
+                "expected_latency_ms_p50": { "type": ["integer", "null"], "minimum": 0 },
+                "expected_latency_ms_p99": { "type": ["integer", "null"], "minimum": 0 },
+                "cost": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "input_per_1k_tokens_usd":         { "type": ["number", "null"], "minimum": 0 },
+                    "output_per_1k_tokens_usd":        { "type": ["number", "null"], "minimum": 0 },
+                    "cached_input_per_1k_tokens_usd":  { "type": ["number", "null"], "minimum": 0 }
+                  }
+                },
+                "rate_limit": {
+                  "type": ["object", "null"],
+                  "properties": {
+                    "rpm": { "type": ["integer", "null"], "minimum": 0 },
+                    "tpm": { "type": ["integer", "null"], "minimum": 0 }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tool_registry": {
+          "type": "object",
+          "required": ["registry_version", "registry_hash", "tools"],
+          "properties": {
+            "registry_version": { "type": "string" },
+            "registry_hash": { "type": "string" },
+            "tools": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/toolDescriptor" }
+            }
+          }
+        },
+        "skill_registry": {
+          "type": ["object", "null"],
+          "required": ["registry_version", "registry_hash", "skills"],
+          "properties": {
+            "registry_version": { "type": "string" },
+            "registry_hash": { "type": "string" },
+            "selection_strategy": {
+              "type": ["string", "null"],
+              "description": "How skills are selected at invocation time (e.g. llm_semantic, code_gated, retrieval_router)."
+            },
+            "skills": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/skillDescriptor" }
+            }
+          }
+        },
+        "workflow": {
+          "type": "object",
+          "properties": {
+            "graph_name": { "type": ["string", "null"] },
+            "graph_version": { "type": ["string", "null"] },
+            "graph_hash": { "type": ["string", "null"] },
+            "routing_policy_version": { "type": ["string", "null"] }
+          }
+        },
+        "subagents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$comment": "version is required and non-null here (unlike toolDescriptor/skillDescriptor) to match the SubagentDescriptor pydantic model (manifest.py: `version: str`).",
+            "required": ["name", "version", "hash"],
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "hash": { "type": "string" },
+              "manifest_ref": {
+                "type": ["string", "null"],
+                "pattern": "^(agentversion:manifest:[a-z][a-z0-9]*_[0-9A-HJKMNP-TV-Z]{26}|agentversion:hash:[a-z0-9-]+:[A-Fa-f0-9]+|https?://.+|file://.+)$",
+                "description": "Typed reference to the subagent's manifest. Forms: 'agentversion:manifest:<canonical-id>', 'agentversion:hash:<algo>:<hex>', 'https://...', 'file://...'. (Bare-ID form was removed in v1.0.) See spec/refs.md."
+              },
+              "handoff_schema_hash": { "type": ["string", "null"] }
+            }
+          },
+          "default": []
+        },
+        "output_contract": {
+          "type": "object",
+          "required": ["version", "schema_hash", "format"],
+          "properties": {
+            "version": { "type": "string" },
+            "schema_hash": { "type": "string" },
+            "format": { "type": "string" },
+            "strict": { "type": "boolean" },
+            "modalities": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": [],
+              "description": "Supported output modalities (e.g. text, image, audio)."
+            }
+          }
+        },
+        "guardrails": {
+          "type": ["object", "null"],
+          "properties": {
+            "bundle_version": { "type": ["string", "null"] },
+            "bundle_hash": { "type": ["string", "null"] }
+          }
+        },
+        "context_config": {
+          "type": ["object", "null"],
+          "properties": {
+            "retrieval_config_version": { "type": ["string", "null"] },
+            "retrieval_config_hash": { "type": ["string", "null"] },
+            "memory_policy_version": { "type": ["string", "null"] },
+            "context_packing_version": { "type": ["string", "null"] }
+          }
+        },
+        "environment": {
+          "type": ["object", "null"],
+          "description": "Deployment + infrastructure fingerprint. See spec/environment.md.",
+          "properties": {
+            "deployment_id": { "type": ["string", "null"] },
+            "region": { "type": ["string", "null"] },
+            "infra_image_hash": { "type": ["string", "null"] },
+            "runtime_versions": {
+              "type": "object",
+              "additionalProperties": { "type": "string" },
+              "default": {},
+              "description": "Map of runtime → version (e.g. {'python': '3.12.5', 'node': '20.10.0'})."
+            },
+            "secret_refs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": [],
+              "description": "Names of secrets the agent consumes (never values)."
+            },
+            "external_service_pins": {
+              "type": "object",
+              "additionalProperties": { "type": "string" },
+              "default": {},
+              "description": "Map of service name → pinned identifier (URL, version, or hash)."
+            },
+            "feature_flags": {
+              "type": "object",
+              "default": {}
+            },
+            "resource_limits": {
+              "type": ["object", "null"],
+              "properties": {
+                "memory_mb": { "type": ["integer", "null"], "minimum": 1 },
+                "cpu_cores": { "type": ["number", "null"], "minimum": 0 },
+                "timeout_seconds": { "type": ["integer", "null"], "minimum": 1 },
+                "max_concurrent_calls": { "type": ["integer", "null"], "minimum": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "type": ["object", "null"],
+      "description": "Operational lifecycle (current_stage + transition history). Not part of contract — does not affect overall_hash. See spec/lifecycle.md.",
+      "required": ["current_stage"],
+      "properties": {
+        "current_stage": {
+          "type": "string",
+          "enum": ["draft", "candidate", "staging", "production", "deprecated", "archived"]
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["stage", "transitioned_at", "by"],
+            "properties": {
+              "stage": {
+                "type": "string",
+                "enum": ["draft", "candidate", "staging", "production", "deprecated", "archived"]
+              },
+              "transitioned_at": { "type": "string", "format": "date-time" },
+              "by": { "type": "string", "minLength": 1 },
+              "eval_ref": { "type": ["string", "null"] },
+              "approved_by": {
+                "type": "array",
+                "items": { "type": "string" },
+                "default": []
+              },
+              "notes": { "type": ["string", "null"] }
+            }
+          },
+          "default": []
+        },
+        "supersedes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "superseded_by": { "type": ["string", "null"] },
+        "sunset_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "evaluation": {
+      "type": ["object", "null"],
+      "description": "Eval gates run against this manifest. Not part of contract — does not affect overall_hash. See spec/evaluation.md.",
+      "properties": {
+        "gates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "threshold", "actual_score", "passed", "ran_at"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "dataset_ref": { "type": ["string", "null"] },
+              "threshold": { "type": "number" },
+              "actual_score": { "type": "number" },
+              "threshold_direction": {
+                "type": "string",
+                "enum": ["min", "max"],
+                "default": "min"
+              },
+              "passed": { "type": "boolean" },
+              "ran_at": { "type": "string", "format": "date-time" },
+              "evaluator_ref": { "type": ["string", "null"] },
+              "notes": { "type": ["string", "null"] }
+            }
+          },
+          "default": []
+        }
+      }
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Platform-specific extensions. Use x- prefix to namespace (e.g. x-otel, x-langsmith).",
+      "default": {}
+    }
+  },
+  "$defs": {
+    "versionedRef": {
+      "type": "object",
+      "required": ["id", "version", "hash"],
+      "properties": {
+        "id": { "type": "string" },
+        "version": { "type": "string" },
+        "hash": { "type": "string" }
+      }
+    },
+    "toolDescriptor": {
+      "type": "object",
+      "required": ["name", "hash"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": ["string", "null"] },
+        "hash": { "type": "string" },
+        "description": {
+          "type": ["string", "null"],
+          "description": "Human-readable description of the tool."
+        },
+        "input_schema_hash": { "type": ["string", "null"] },
+        "output_schema_hash": { "type": ["string", "null"] },
+        "input_schema_inline": {
+          "type": ["object", "null"],
+          "description": "Optional inline JSON Schema. When present, must JCS-SHA256 to input_schema_hash."
+        },
+        "output_schema_inline": {
+          "type": ["object", "null"],
+          "description": "Optional inline JSON Schema. When present, must JCS-SHA256 to output_schema_hash."
+        },
+        "stability": {
+          "type": ["string", "null"],
+          "enum": ["experimental", "stable", "deprecated", null]
+        },
+        "semantic_version": {
+          "type": ["string", "null"],
+          "pattern": "^\\d+\\.\\d+\\.\\d+(-[A-Za-z0-9.-]+)?(\\+[A-Za-z0-9.-]+)?$",
+          "description": "SemVer of the tool's implementation. Catches behavioral drift that schemas miss. See spec/manifest.md."
+        },
+        "implementation_ref": {
+          "type": ["string", "null"],
+          "description": "Opaque identifier of the implementation (e.g. git commit, image hash)."
+        },
+        "annotations": {
+          "type": ["object", "null"],
+          "description": "Per-tool metadata (e.g. destructive, requires_confirmation, read_only_hint)."
+        }
+      }
+    },
+    "skillDescriptor": {
+      "type": "object",
+      "required": ["name", "hash"],
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": ["string", "null"] },
+        "hash": {
+          "type": "string",
+          "description": "SHA-256 of the SKILL.md body content."
+        },
+        "description": { "type": ["string", "null"] },
+        "stability": {
+          "type": ["string", "null"],
+          "enum": ["experimental", "stable", "deprecated", null]
+        },
+        "annotations": {
+          "type": ["object", "null"]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/compatibility-policy.schema.json",
+  "title": "Compatibility Policy",
+  "description": "User-configurable rules mapping change severity to actions per agent surface.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "version", "name"],
+  "properties": {
+    "kind": {
+      "const": "compatibility_policy"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "Policy schema version"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable policy name"
+    },
+    "preset": {
+      "type": "string",
+      "enum": ["strict", "default", "permissive", "custom"],
+      "default": "default",
+      "description": "Base preset this policy derives from"
+    },
+    "prompt_stack": { "$ref": "#/$defs/surface_rules" },
+    "model_runtime": { "$ref": "#/$defs/surface_rules" },
+    "tool_registry": { "$ref": "#/$defs/surface_rules" },
+    "skill_registry": { "$ref": "#/$defs/surface_rules" },
+    "workflow": { "$ref": "#/$defs/surface_rules" },
+    "subagents": { "$ref": "#/$defs/surface_rules" },
+    "output_contract": { "$ref": "#/$defs/surface_rules" },
+    "guardrails": { "$ref": "#/$defs/surface_rules" },
+    "context_config": { "$ref": "#/$defs/surface_rules" },
+    "environment": { "$ref": "#/$defs/surface_rules" }
+  },
+  "$defs": {
+    "action": {
+      "type": "string",
+      "enum": ["keep", "repair", "flag", "drop"],
+      "description": "Action to take when a change of this severity is detected"
+    },
+    "surface_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "on_minor": { "$ref": "#/$defs/action", "default": "keep" },
+        "on_moderate": { "$ref": "#/$defs/action", "default": "flag" },
+        "on_major": { "$ref": "#/$defs/action", "default": "drop" }
+      }
+    }
+  }
+}

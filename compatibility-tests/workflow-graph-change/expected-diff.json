@@ -1,0 +1,22 @@
+{
+  "spec_version": "1.0.0",
+  "kind": "manifest_diff",
+  "old_manifest_id": "amf_v1",
+  "new_manifest_id": "amf_v2",
+  "changed_surfaces": [
+    {
+      "surface": "workflow",
+      "change_type": "breaking",
+      "severity": "major",
+      "details": [
+        "graph topology changed",
+        "graph_version: '1' \u2192 '2'"
+      ]
+    }
+  ],
+  "summary": {
+    "breaking_surfaces": 1,
+    "non_breaking_surfaces": 0,
+    "max_severity": "major"
+  }
+}

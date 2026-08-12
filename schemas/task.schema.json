@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/task.schema.json",
+  "title": "Task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "kind", "task_id", "created_at", "input"],
+  "properties": {
+    "spec_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "kind": { "const": "task" },
+    "task_id": { "type": "string", "minLength": 1 },
+    "source": {
+      "type": ["object", "null"],
+      "properties": {
+        "type": { "type": "string" },
+        "system": { "type": ["string", "null"] },
+        "external_id": { "type": ["string", "null"] }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "input": {
+      "type": "object",
+      "required": ["messages"],
+      "properties": {
+        "messages": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/message" }
+        }
+      }
+    },
+    "attachments": { "type": "array", "default": [] },
+    "metadata": { "type": "object", "default": {} },
+    "tags": { "type": "array", "items": { "type": "string" }, "default": [] }
+  },
+  "$defs": {
+    "message": {
+      "type": "object",
+      "required": ["role"],
+      "properties": {
+        "role": { "type": "string", "enum": ["system", "developer", "user", "assistant", "tool"] },
+        "content": { "type": ["string", "null"] },
+        "content_ref": { "type": ["string", "null"] },
+        "name": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

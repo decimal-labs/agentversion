@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/decimal-labs/agentversion/main/schemas/manifest-diff.schema.json",
+  "title": "Manifest Diff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "spec_version",
+    "kind",
+    "old_manifest_id",
+    "new_manifest_id",
+    "changed_surfaces",
+    "summary"
+  ],
+  "properties": {
+    "spec_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "kind": {
+      "const": "manifest_diff"
+    },
+    "old_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "new_manifest_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "changed_surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["surface", "change_type"],
+        "properties": {
+          "surface": {
+            "type": "string",
+            "enum": [
+              "prompt_stack",
+              "model_runtime",
+              "tool_registry",
+              "skill_registry",
+              "workflow",
+              "subagents",
+              "output_contract",
+              "guardrails",
+              "context_config",
+              "environment",
+              "behavioral_policy"
+            ]
+          },
+          "change_type": {
+            "type": "string",
+            "enum": ["breaking", "non_breaking"]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["minor", "moderate", "major"],
+            "default": "minor"
+          },
+          "details": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["breaking_surfaces", "non_breaking_surfaces"],
+      "properties": {
+        "breaking_surfaces": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "non_breaking_surfaces": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_severity": {
+          "type": "string",
+          "enum": ["none", "minor", "moderate", "major"],
+          "default": "none"
+        }
+      }
+    }
+  }
+}

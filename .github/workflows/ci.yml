@@ -1,0 +1,70 @@
+name: CI
+
+# Runs on push to main as well as on pull requests. Without the push trigger
+# nothing verified main itself, which is how tests/test_cli.py sat asserting a
+# package version two releases out of date: green in a stale local venv, red in
+# every fresh install, and never once run by CI.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install with dev extras
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      # test_conformance.py exercises the JSON scenarios under
+      # compatibility-tests/ (tool-rename, output-schema-change,
+      # subagent-handoff-change) so no separate job needed.
+      - name: Run pytest
+        run: python -m pytest tests/ -q
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Ruff
+        # Config lives in pyproject.toml ([tool.ruff.lint]) so local and CI
+        # lint stay in lock-step. Lints the whole repo, tests included.
+        run: ruff check .
+
+      - name: Mypy
+        # Strict type-check the package (config in pyproject [tool.mypy]).
+        run: mypy agentversion/

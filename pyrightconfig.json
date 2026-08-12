@@ -1,0 +1,13 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "include": [
+    "agentversion",
+    "tests",
+    "examples"
+  ],
+  "extraPaths": [
+    "."
+  ]
+}
