@@ -1,12 +1,12 @@
 {
   "spec_version": "1.0.0",
   "kind": "agent_manifest",
-  "manifest_id": "amf_v1",
+  "manifest_id": "amf_01KZWEB6GDSZ28WY3ES5Q6TPAR",
   "agent_name": "demo",
   "version_label": "v1",
   "created_at": "2026-05-12T00:00:00Z",
   "identity": {
-    "overall_hash": "sha256:base",
+    "overall_hash": "sha256:c0b9f791991e964464d5f0306d943cfb90e357bff7ed414be75a6ba87afa0c5e",
     "hash_algorithm": "jcs-sha256"
   },
   "contract": {

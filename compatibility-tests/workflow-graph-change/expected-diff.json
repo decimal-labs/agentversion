@@ -1,8 +1,8 @@
 {
   "spec_version": "1.0.0",
   "kind": "manifest_diff",
-  "old_manifest_id": "amf_v1",
-  "new_manifest_id": "amf_v2",
+  "old_manifest_id": "amf_01KZWEB6HB5MAHNVV45295P7MM",
+  "new_manifest_id": "amf_01KZWEB6HDV9V0S5839NE0MK8C",
   "changed_surfaces": [
     {
       "surface": "workflow",

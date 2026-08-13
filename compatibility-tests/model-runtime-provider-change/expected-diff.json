@@ -1,8 +1,8 @@
 {
   "spec_version": "1.0.0",
   "kind": "manifest_diff",
-  "old_manifest_id": "amf_v1",
-  "new_manifest_id": "amf_v2",
+  "old_manifest_id": "amf_01KZWEB6GDSZ28WY3ES5Q6TPAR",
+  "new_manifest_id": "amf_01KZWEB6GFD65WN85WYQREF3K9",
   "changed_surfaces": [
     {
       "surface": "model_runtime",

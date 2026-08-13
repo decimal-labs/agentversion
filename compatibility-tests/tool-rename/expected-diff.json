@@ -1,8 +1,8 @@
 {
   "spec_version": "1.0.0",
   "kind": "manifest_diff",
-  "old_manifest_id": "amf_v1",
-  "new_manifest_id": "amf_v2",
+  "old_manifest_id": "amf_01KZWEB6H6B50N1EYNVFGTXM1T",
+  "new_manifest_id": "amf_01KZWEB6H8AHE7V9SEY53NJPJ3",
   "changed_surfaces": [
     {
       "surface": "tool_registry",
