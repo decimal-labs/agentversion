@@ -92,6 +92,32 @@ ignore_missing_imports = true
 module = "jsonschema"
 ignore_missing_imports = true
 
+# DO NOT DELETE — this section is the whole reason the sdist is not a repo dump.
+# Without it hatchling sweeps in EVERY file git does not ignore: maintainer docs,
+# .github/ CI plumbing, release notes, whatever else is sitting in the tree. None of
+# that helps anyone building from source, nobody notices it in a tarball, and it
+# comes back on every single `python -m build` unless this list is here.
+# The list below is an ALLOW-list — anything new (a lockfile, a scratch doc) is
+# excluded until it is named here on purpose.
+#
+# LOAD-BEARING: schemas/ spec/ examples/ compatibility-tests/ are the SOURCES of
+# [tool.hatch.build.targets.wheel.force-include] above. Drop one and the sdist
+# still builds, but building a WHEEL FROM THAT SDIST fails — the force-include
+# points at a path that is no longer there. Downstream packagers do exactly that.
+[tool.hatch.build.targets.sdist]
+include = [
+    "/agentversion",
+    "/schemas",
+    "/spec",
+    "/examples",
+    "/compatibility-tests",
+    "/tests",
+    "/CONFORMANCE.md",
+    "/CHANGELOG.md",
+    "/README.md",
+    "/LICENSE",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Coverage gate: suite measures 94% (line+branch) on the clean tree; the gate
