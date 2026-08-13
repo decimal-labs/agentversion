@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`contract_from_components` now emits the `behavioral_policy` and
   `environment` surfaces.** 0.2.0 added the models, surface keys, and diff
   classifiers, but the shared flat-components → contract assembler silently
-  dropped both — so a producer (the DecimalAI SDK / the platform) could never
+  dropped both — so a producer (e.g. an SDK exporter) could never
   actually populate them from components. They are now assembled verbatim from
   each component's `schema_json`. Additive-only: a manifest that doesn't declare
   them is unchanged (same `overall_hash`).
@@ -57,7 +57,7 @@ byte-identically and is pinned to this assembly by its conformance test.
 - **Extension hatch** (`AgentContract` is now `extra="allow"`): a custom / emerging contract surface
   (RAG corpus, MCP server registry, memory policy, vendor extension) is hashed by the hasher and diffed
   by the engine, and now also **survives `model_validate`** — previously it was silently dropped, so a
-  validate→re-serialize→re-hash round-trip changed `overall_hash` (a moat-breaking non-determinism). The
+  validate→re-serialize→re-hash round-trip changed `overall_hash` (a hash-determinism break). The
   surface set can grow without forking the model. ASCII/known-surface hashes are unchanged.
 - **`COMPONENT_TYPE_TO_SURFACE` + `surface_key_for_component()`** — the canonical routing from a
   producer's flat `component_type` to the contract surface key it lands in (incl. the singular→plural
@@ -65,17 +65,15 @@ byte-identically and is pinned to this assembly by its conformance test.
   translator) share one source of truth instead of hand-copying the map — closing a cross-stack drift
   class where the rename had to be applied independently in every translator copy.
 - **`contract.contract_from_components()`** — the single source of truth for assembling a contract block
-  (every surface, in canonical shape) from a producer's flat component list. Both the DecimalAI SDK
-  exporter and the platform's hash path route through it, so they compute the *same* `jcs-sha256`
-  identity hash for the same agent — the platform can now make the canonical hash authoritative and a
-  customer reproduces the stored hash with the OSS CLI. Replaces two hand-written
-  translators that shared no code or test.
+  (every surface, in canonical shape) from a producer's flat component list, so any producer computes the
+  same `jcs-sha256` identity hash for the same agent and a manifest's stored hash reproduces with the
+  OSS CLI.
 
 ### Fixed (hash-determinism + trust)
 - **Canonical-hash domain** (`hasher.py`): NFC-normalize every string (keys + values) and reject
   non-finite floats (`NaN`/`±Infinity`) **before** JCS canonicalization. JCS canonicalizes bytes but
   does not Unicode-normalize, so a composed `"café"` and a decomposed `"café"` previously produced a
-  different `overall_hash` for the same agent (a cross-language reproduction break in the moat); and a
+  different `overall_hash` for the same agent (a cross-language reproduction break); and a
   `NaN` raised an opaque `jcs` error instead of a clear domain error. NFC of ASCII is a no-op, so
   **existing manifest hashes are unchanged** (frozen vectors still pass). Documented in `spec/hashing.md`.
 - **Attestation integrity** (`validator.py`): an attestation's `signed_payload_hash` must equal the

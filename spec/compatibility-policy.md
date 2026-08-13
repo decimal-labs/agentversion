@@ -52,6 +52,10 @@ Each column below is the action taken when that surface changes at the given sev
 | `default` | Balanced | keep | drop | drop |
 | `permissive` | Keep more data | keep | flag | flag |
 
+**Presets are a naming convention, not a resolver.** `preset` records intent; it does not populate rules. The reference implementation's `CompatibilityPolicy.rules_for()` ignores it — any surface you leave unset falls back to `keep`/`flag`/`drop`, so set the per-surface blocks explicitly to get the behavior above.
+
+**With no policy at all, the fallback is deliberately non-destructive.** `classify_compatibility()` called without a policy never returns `drop`: no changes, or non-breaking changes only → `keep`; breaking changes confined to `output_contract` → `repair`; any other breaking change → `replay`. This is intentional — a caller who supplied no policy never has data discarded on their behalf. `drop` is reachable only through an explicit per-surface rule.
+
 ### Platform-only extensions
 
 The fields below are implemented by the DecimalAI platform, not by the OSS schema/model. Do not put them in a policy you validate against `schemas/compatibility-policy.schema.json` — it will be rejected.

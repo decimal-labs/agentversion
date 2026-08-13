@@ -70,7 +70,13 @@ class CompatibilityPolicy(BaseModel):
     kind: Literal["compatibility_policy"] = "compatibility_policy"
     version: str = "0.1"
     name: str = "default"
-    preset: Literal["strict", "default", "permissive", "custom"] | None = "default"
+    preset: Literal["strict", "default", "permissive", "custom"] | None = Field(
+        "default",
+        description=(
+            "Provenance label only — recorded, not evaluated. "
+            "Per-surface rule blocks drive every decision."
+        ),
+    )
 
     prompt_stack: SurfaceRules | None = None
     model_runtime: SurfaceRules | None = None

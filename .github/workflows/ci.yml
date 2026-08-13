@@ -1,9 +1,7 @@
 name: CI
 
-# Runs on push to main as well as on pull requests. Without the push trigger
-# nothing verified main itself, which is how tests/test_cli.py sat asserting a
-# package version two releases out of date: green in a stale local venv, red in
-# every fresh install, and never once run by CI.
+# Runs on push to main as well as on pull requests, so main is verified directly
+# and not only through PRs.
 on:
   pull_request:
     branches: [main]

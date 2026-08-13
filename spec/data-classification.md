@@ -2,7 +2,7 @@
 
 > Status: Stable v1.0 · Added in v0.9.0
 
-Compliance labels on dataset snapshots — PII state, retention, residency, consent basis. Makes GDPR / SOC2 / HIPAA review machine-checkable.
+Compliance labels on dataset snapshots — PII state, retention, residency, consent basis. Records the facts a compliance review needs, including the GDPR Article 6 legal basis, in a machine-readable form.
 
 ## Why
 
@@ -48,7 +48,7 @@ Production traces often contain PII (names, emails, payment info). Pre-v0.9, the
 }
 ```
 
-This is the typical "build me an SFT set that's safe to ship to a vendor" query. Episodes with `data_classification.pii_state == "raw"` get filtered out.
+This is the typical "build me an SFT set I can ship to a vendor" query. Episodes with `data_classification.pii_state == "raw"` get filtered out.
 
 ## Hash participation
 
@@ -59,3 +59,4 @@ Data classification is on the dataset snapshot itself (not on the agent manifest
 - **PII detection.** The spec assumes you classify out-of-band — a redaction pipeline labels the snapshot when it produces it. The spec doesn't ship a PII detector.
 - **Per-row labels.** Classification is at the snapshot granularity. If individual episodes within a snapshot have different PII states, the snapshot must use the most permissive label, or be split.
 - **Encryption-at-rest enforcement.** That's a platform concern. The spec only carries the labels needed to make policy decisions.
+- **Verify the labels.** `pii_state` defaults to `none` and nothing verifies it, so a snapshot no pipeline ever classified will pass a `pii_states` filter. Label explicitly at production time and treat an absent classification as unknown.

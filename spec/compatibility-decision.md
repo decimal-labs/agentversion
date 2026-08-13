@@ -2,10 +2,10 @@
 
 > Status: Stable v1.0 · Added in v0.1.0
 
-Defined in the AgentVersion. See also [hashing.md](./hashing.md) and [versioning-policy.md](./versioning-policy.md).
+Defined in the AgentVersion specification. See also [hashing.md](./hashing.md) and [versioning-policy.md](./versioning-policy.md).
 
 
-This is one of the most important open pieces.
+A `compatibility_decision` records the per-episode verdict for one manifest transition, together with the reason codes that produced it.
 
 ```json
 {

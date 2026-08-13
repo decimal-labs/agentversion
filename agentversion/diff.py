@@ -814,11 +814,9 @@ SURFACE_KEYS = [
     "behavioral_policy",
 ]
 
-# CANONICAL routing from a producer's flat `component_type` to the contract SURFACE_KEY it lands in.
-# This is the single source of truth for that mapping, so a producer (the SDK) and a consumer (the
-# platform's diff path) can't drift — notably the singular→plural `guardrail`→`guardrails` rename,
-# which previously had to be applied by hand in every translator copy. An unknown component
-# type maps to itself (so a new/custom surface is diffed generically rather than dropped).
+# Routing from a producer's flat `component_type` to the contract SURFACE_KEY it lands in,
+# including the singular→plural `guardrail`→`guardrails` case. A component type with no entry
+# here maps to itself (so a new/custom surface is diffed generically rather than dropped).
 COMPONENT_TYPE_TO_SURFACE: dict[str, str] = {
     "tool": "tool_registry",
     "skill": "skill_registry",
@@ -834,8 +832,8 @@ COMPONENT_TYPE_TO_SURFACE: dict[str, str] = {
 def surface_key_for_component(component_type: str) -> str:
     """The contract surface a flat ``component_type`` belongs to (identity for unknown types).
 
-    Use this everywhere a producer's component is routed to an agentversion surface, so the routing
-    (including ``guardrail``→``guardrails``) lives in exactly one place.
+    Looks ``component_type`` up in ``COMPONENT_TYPE_TO_SURFACE`` (for example
+    ``guardrail``→``guardrails``) and returns it unchanged when it has no entry.
     """
     return COMPONENT_TYPE_TO_SURFACE.get(component_type, component_type)
 

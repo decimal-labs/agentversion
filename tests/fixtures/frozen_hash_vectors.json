@@ -1,6 +1,6 @@
 {
   "_README": [
-    "FROZEN HASH VECTORS - anti-drift guard for the manifest-aware versioning moat.",
+    "FROZEN HASH VECTORS - anti-drift guard for manifest-aware versioning.",
     "Each entry is a representative `contract` input plus its `overall_hash` computed",
     "ONCE by the current hashing pipeline (agentversion/hasher.py :: hash_manifest,",
     "algorithm jcs-sha256). tests/test_frozen_hash_vectors.py asserts hash_manifest(input)",
@@ -8,7 +8,7 @@
     "literals do NOT flow through the current code, so a silent canonicalization or",
     "quantization change is caught here.",
     "IF THIS TEST FAILS: a change altered the hash output. That is a BREAKING change to",
-    "the moat (every previously-stored overall_hash would no longer reproduce). Do NOT just",
+    "manifest identity (every previously-stored overall_hash would no longer reproduce). Do NOT just",
     "regenerate these vectors to make the test green. Either revert the change, or, if the",
     "algorithm change is deliberate, bump the hash/format version (identity.hash_algorithm,",
     "currently 'jcs-sha256') and regenerate these vectors as part of that intentional",
@@ -76,7 +76,7 @@
       "overall_hash": "sha256:a0dd07a760b4e86400725d9d6580a01668aa0d65c180e022284755b98c58d74a"
     },
     "skill_registry": {
-      "description": "The skills moat surface participates in overall_hash (skills hashed as-is, no quantization).",
+      "description": "The skill_registry surface participates in overall_hash (skills hashed as-is, no quantization).",
       "input": {
         "contract": {
           "prompt_stack": {

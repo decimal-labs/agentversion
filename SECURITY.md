@@ -12,8 +12,8 @@ saying which one you think you found a problem in — the fix is very different.
 Two ways to reach us, either is fine:
 
 - **GitHub private vulnerability reporting** — **Security → Report a vulnerability** on this
-  repository. That opens a private advisory only maintainers can see, and keeps the exchange
-  attached to the code.
+  repository. That keeps the report private to the maintainers and keeps the exchange attached to
+  the code.
 - **Email** — [hello@decimal.ai](mailto:hello@decimal.ai). A PGP key is available on request if you
   would rather not send details in cleartext.
 
@@ -52,22 +52,23 @@ what the spec says. In scope:
 - The DecimalAI hosted platform (`api.decimal.ai`, `app.decimal.ai`). Report those the same way, to
   the same address — they are just not this repository, and the fix lands elsewhere.
 - Design decisions documented in `spec/` and the ADRs under `adrs/` that you disagree with but that
-  have no exploitable consequence. Those are worth an issue or an ADR, not an advisory.
+  have no exploitable consequence. Those are worth an issue or an ADR, not a security report.
 - Vulnerabilities in dependencies, unless this package's use of them is what makes them reachable.
 - Scanner output with no demonstrated impact.
 
 ## What happens next
 
-We are a small team, so rather than publish a response time we cannot hold to, here is what we
-actually do:
+We are a small team with no on-call rotation, so rather than promise a response time or a formal
+process we cannot hold to, here is what we actually do:
 
 - We acknowledge a report once we have read it, and we say plainly if triage is going to take a
   while.
 - We tell you whether we consider it in scope and what we intend to do.
-- We follow coordinated disclosure. We agree a timeline with you rather than impose one, and we will
-  not ask you to stay quiet indefinitely.
-- We are happy to credit you in the advisory, the `CHANGELOG.md` entry, and — for a spec fix — the
-  ADR. Tell us how you want to be named, or say you would rather not be.
+- Fixes ship in an ordinary release and are described in `CHANGELOG.md`. We do not run a published
+  advisory or CVE process, so please don't wait on one — if you intend to write up what you found,
+  tell us and we will work out the timing together rather than impose a deadline on you.
+- We are happy to credit you in the `CHANGELOG.md` entry and — for a spec fix — the ADR. Tell us how
+  you want to be named, or say you would rather not be.
 
 There is no paid bug bounty. That is a resourcing decision, not a judgment about the value of your
 work.

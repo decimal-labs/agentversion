@@ -118,4 +118,4 @@ If you need "same agent across regions" semantics (one logical version, multiple
 
 - `secret_refs` holds **names**, not **values**. Implementations that violate this requirement leak credentials into version-controlled artifacts.
 - `external_service_pins` values are public-ish identifiers (URLs, versions). Don't put bearer tokens there.
-- A future `extensions.signing` block (§3d) will let you sign the environment block to detect tampering by infrastructure that shouldn't be modifying contract state.
+- The environment block is inside `contract`, so it is covered by `identity.overall_hash` — sign that hash via `identity.attestations[]` to detect tampering by infrastructure that shouldn't be modifying contract state. See [attestation.md](./attestation.md) (§3d).

@@ -266,7 +266,7 @@ class BehavioralPolicy(BaseModel):
     """Versioned BEHAVIORAL-POLICY contract surface.
 
     Binds the agent to a named policy artifact — the rules it must hold to, e.g. a refund/escalation
-    policy ("deny until the customer objects N times, then escalate; never admit liability"), a safety
+    policy ("auto-approve refunds under $50; escalate anything higher to a human"), a safety
     guardrail set, or an escalation SOP. The surface is document-agnostic: ``policy_hash`` is the stable
     identity (a hash of whatever policy artifact you bind), and the value carried is opaque to this
     model.

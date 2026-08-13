@@ -2,10 +2,10 @@
 
 The single source of truth for how a producer's *flat* components (one entry per
 tool / prompt / model / …) regroup into the contract-keyed surfaces the diff and
-the identity hash are computed from. Both the DecimalAI SDK exporter
-(``ManifestSnapshot.to_agentversion``) and the platform's diff translators call
-this, so a producer and a consumer can't drift on the mapping — and therefore
-compute the *same* ``jcs-sha256`` identity hash for the same agent.
+the identity hash are computed from. The DecimalAI platform calls this directly;
+the DecimalAI SDK exporter (``ManifestSnapshot.to_agentversion``) mirrors it and
+is held byte-identical to it by a cross-implementation test — so a producer and a
+consumer compute the *same* ``jcs-sha256`` identity hash for the same agent.
 
 Each component is a plain dict::
 

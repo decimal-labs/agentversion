@@ -31,7 +31,8 @@ dependencies = [
     "rich>=13.0",
     # Upper-pinned: jcs does the RFC 8785 canonicalization that every overall_hash
     # is built on; a major bump could change canonicalization and silently break
-    # every stored hash (canonicalization stability = hash stability = the moat).
+    # every stored hash (canonicalization stability is hash stability — every
+    # previously computed overall_hash depends on it).
     "jcs>=0.2,<1",
 ]
 

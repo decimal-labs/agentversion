@@ -23,19 +23,13 @@ Located under [`compatibility-tests/`](./compatibility-tests/). Each subdirector
 
 ```
 compatibility-tests/
-  tool-rename/
+  <scenario-name>/
     before.json          # input manifest A
     after.json           # input manifest B
     expected-diff.json   # ManifestDiff produced by a conforming implementation
-  output-schema-change/
-    before.json
-    after.json
-    expected-diff.json
-  subagent-handoff-change/
-    before.json
-    after.json
-    expected-diff.json
 ```
+
+Every subdirectory of `compatibility-tests/` is a scenario and all of them are normative — run the directory, not a fixed list.
 
 The Python reference verifies conformance via `tests/test_conformance.py`. To verify an implementation in another language:
 

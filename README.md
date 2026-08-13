@@ -123,7 +123,7 @@ You probably already have observability and a trace store. None of them answer *
 
 | You already have | What it gives you | What it doesn't |
 |---|---|---|
-| OpenTelemetry / LangSmith / Langfuse | rich execution traces | a versioned contract for the agent that produced them |
+| OpenTelemetry and the tracing tools built on it | rich execution traces | a versioned contract for the agent that produced them |
 | A2A / ACP agent cards | runtime discovery + I/O types | version identity or data-compatibility |
 | OpenAI JSONL / SFT files | a training format | provenance — *which agent version* produced each row |
 
@@ -181,7 +181,7 @@ agentversion diff examples/manifest/finance-agent-v1.json \
   run: agentversion diff baseline-manifest.json current-manifest.json --fail-on-breaking
 ```
 
-**Use it from Python** — every line below is exercised by the test suite:
+**Use it from Python** — every API below is covered by the test suite:
 
 ```python
 import json
@@ -189,17 +189,20 @@ from agentversion import AgentManifest, validate_manifest_file, hash_manifest
 from agentversion.diff import diff_manifests
 from agentversion.compatibility import classify_compatibility
 
-old = json.load(open("finance-agent-v1.json"))
-new = json.load(open("finance-agent-v2.json"))
+old = json.load(open("examples/manifest/finance-agent-v1.json"))
+new = json.load(open("examples/manifest/finance-agent-v2.json"))
 
 # Validate + identify a version
-assert validate_manifest_file("finance-agent-v2.json").valid
+assert validate_manifest_file("examples/manifest/finance-agent-v2.json").valid
 m = AgentManifest.model_validate(new)
 print(m.agent_name, m.identity.overall_hash)   # finance-agent  sha256:767ebff1...
 
 # Diff, then ask what to do with old data
 result = diff_manifests(old, new)
 print(result.summary.breaking_surfaces)                       # 5
+
+# Pass no policy and the built-in fallback rules apply. They are deliberately
+# non-destructive: the worst they will ever recommend is replay, never drop.
 print(classify_compatibility(result).recommended_decision)   # replay
 ```
 
@@ -235,7 +238,7 @@ The protocol is fully useful standalone:
 3. **Annotate traces** — stamp `identity.overall_hash` onto your OpenTelemetry spans as `agentversion.manifest_hash` for version-scoped filtering. See [`examples/integrations/otel_mapping.md`](https://github.com/decimal-labs/agentversion/blob/main/examples/integrations/otel_mapping.md), bundled in the package.
 4. **Classify data compatibility** — `diff --compat` (or `decision generate`) gives a per-episode keep / repair / replay / drop verdict you can act on.
 
-It interoperates with LangSmith, Langfuse, Phoenix, and W&B — annotate their traces/datasets with a manifest hash, or read/write compatibility decisions alongside your eval pipeline.
+A manifest hash is just a string, so it drops into whatever trace store or eval tool you already run — put `identity.overall_hash` on the spans or dataset rows you keep, and the compatibility decisions sit alongside your eval pipeline as ordinary JSON.
 
 ---
 

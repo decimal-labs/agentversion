@@ -2,7 +2,7 @@
 
 > Status: Stable v1.0 · Added in v0.1.0
 
-Defined in the AgentVersion. See also [hashing.md](./hashing.md) and [versioning-policy.md](./versioning-policy.md).
+Defined in the AgentVersion specification. See also [hashing.md](./hashing.md) and [versioning-policy.md](./versioning-policy.md).
 
 
 For platform-scale classification where thousands of episodes need compatibility decisions at once.

@@ -12,7 +12,7 @@ How every spec object — manifests, tasks, episodes, steps, decisions, jobs —
 
 Example: `amf_01HZK1A2B3C4D5E6F7G8H9J0K1`
 
-The prefix tells you what kind of object you're looking at without having to read the surrounding context. The ULID portion sorts lexicographically by mint time within the same millisecond, so `ORDER BY id` is a valid `ORDER BY created_at` for most purposes.
+The prefix tells you what kind of object you're looking at without having to read the surrounding context. The ULID portion sorts lexicographically by mint millisecond, so `ORDER BY id` approximates `ORDER BY created_at`; ordering *within* a single millisecond is not guaranteed (see "Why ULID, not UUID?" below).
 
 ## Prefixes
 

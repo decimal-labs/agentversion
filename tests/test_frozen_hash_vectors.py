@@ -1,4 +1,4 @@
-"""Frozen-vector anti-drift test for the manifest-aware versioning moat.
+"""Frozen-vector anti-drift test for manifest-aware versioning hash stability.
 
 The other example-hash test (``test_example_manifests_have_correct_hashes`` in
 ``test_hasher.py``) is *self-referential*: it reads ``overall_hash`` from a
@@ -13,9 +13,9 @@ accidental drift in canonicalization (jcs upgrade), quantization steps, or the
 surface-concatenation format is caught here.
 
 ================================ READ ME ===============================
-IF THIS TEST FAILS: the hash output changed. That is a BREAKING change to the
-moat -- every previously-stored ``overall_hash`` would stop reproducing, and
-manifest identity / dataset validity across the platform would silently break.
+IF THIS TEST FAILS: the hash output changed. That is a BREAKING change to
+manifest identity -- every previously-stored ``overall_hash`` would stop
+reproducing, and dataset validity across the platform would silently break.
 
 Do NOT regenerate the vectors just to make the test green. Either:
   1. revert the change that altered the hash, or
@@ -78,6 +78,6 @@ def test_frozen_overall_hash(name: str) -> None:
         f"\nFROZEN HASH DRIFT for vector {name!r}:"
         f"\n  frozen  : {frozen}"
         f"\n  computed: {computed}"
-        f"\nThe hashing pipeline changed. This is a BREAKING change to the moat -- "
+        f"\nThe hashing pipeline changed. This is a BREAKING change to manifest identity -- "
         f"do NOT just regenerate the vector. See the module docstring."
     )

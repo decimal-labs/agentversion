@@ -272,8 +272,9 @@ The spec ships with all of the following:
 * the markdown spec documents
 * the JSON Schemas
 * a Python validator CLI
-* 3–5 realistic example manifests
-* 3 realistic drift scenarios
+* two worked example manifests (`examples/manifest/finance-agent-v1.json` → `-v2.json`)
+* one narrated drift scenario (`examples/scenarios/tool-rename-drift.md`) plus a runnable `walkthrough.py`
+* an 8-scenario conformance suite under `compatibility-tests/`
 * one LangGraph integration example
 * one OpenTelemetry mapping example
 

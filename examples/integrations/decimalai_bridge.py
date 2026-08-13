@@ -10,8 +10,8 @@ for the diff and the keep / repair / replay / drop verdict, and you can gate it 
                                    (an agentversion dict)       classify_compatibility(diff)
 
 This is the seam that makes agentversion the *open core* of the paid platform: the
-manifest the SDK captures is the very format ``agentversion diff`` consumes — you can
-reproduce the platform's diffs and verdicts entirely outside DecimalAI.
+manifest the SDK captures is the format ``agentversion diff`` consumes, so you can run
+the same manifest diff and compatibility classification in CI with no DecimalAI account.
 
 Run it::
 
