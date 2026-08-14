@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **Package version ≠ spec version.** This file tracks the **package** version. The on-the-wire `spec_version` is independent and frozen at `1.0.0`; a pre-1.0 package can implement a stable 1.0 spec, which is exactly the situation today.
 
+## [0.2.3] - 2026-08-14
+
+Packaging and documentation only. **No code, schema, or `spec_version` change** — the
+on-the-wire spec stays frozen at 1.0.0 and every hash vector is unchanged.
+
+### Fixed
+- **The source distribution now builds a wheel.** The sdist previously packed whatever the
+  working tree happened to contain, and omitted `schemas/`, `spec/`, `examples/` and
+  `compatibility-tests/` — the directories the wheel pulls in via `force-include`. The sdist
+  itself still built, so the gap only surfaced one step later: building a **wheel from that
+  sdist** failed, which is exactly what `uv build` and downstream packagers do. The sdist now
+  ships an explicit allow-list covering those sources.
+- **The conformance fixtures now validate against the published schema.** They had drifted
+  from the schema shipped in the package, so a consumer validating the fixtures as a
+  self-check would see spurious failures.
+
+### Changed
+- Spec wording and README claims tightened to match what the package actually implements.
+
 ## [0.2.2] - 2026-07-15
 
 ### Changed
