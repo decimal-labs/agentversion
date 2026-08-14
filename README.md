@@ -1,11 +1,15 @@
 # AgentVersion
 
+*Part of [DecimalAI](https://decimal.ai). Most users want the Python SDK → [decimal-labs/decimalai-python](https://github.com/decimal-labs/decimalai-python).*
+
 **Your agent changed. Is your saved data still valid?**
 
 [![PyPI](https://img.shields.io/pypi/v/agentversion)](https://pypi.org/project/agentversion/)
+[![Downloads](https://static.pepy.tech/badge/agentversion/month)](https://pepy.tech/project/agentversion)
+[![CI](https://img.shields.io/github/actions/workflow/status/decimal-labs/agentversion/ci.yml?branch=main)](https://github.com/decimal-labs/agentversion/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://pypi.org/project/agentversion/)
 [![Spec](https://img.shields.io/badge/spec-v1.0-success)](https://pypi.org/project/agentversion/)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://pypi.org/project/agentversion/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://github.com/decimal-labs/agentversion/blob/main/LICENSE)
 
 When you ship a new version of an agent, everything you collected against the old one — production traces, eval datasets, SFT (supervised fine-tuning) examples — quietly drifts out of date. There's no `package.json` to pin an agent's contract, and no `git diff` to tell you what changed.
 
@@ -271,7 +275,7 @@ A manifest can carry the eval results that gated its release in `evaluation.gate
 }
 ```
 
-Those scores come from [`skillevaluation`](https://pypi.org/project/skillevaluation/), the sibling open spec for A/B benchmarking skills. `agentversion` records *what an agent version is*; `skillevaluation` measures *whether it's better*.
+Those scores come from [`skillevaluation`](https://github.com/decimal-labs/skillevaluation), the sibling open spec: `agentversion` versions the agent runtime itself (what an agent version *is* and what changed), while `skillevaluation` A/B-benchmarks a single skill (whether it actually helps).
 
 The [`decimalai`](https://pypi.org/project/decimalai/) Python SDK builds on `agentversion` to add framework adapters (capture a manifest straight from your LangGraph/CrewAI app), trace capture, and managed replay — but you never need it to use the spec.
 
@@ -317,3 +321,7 @@ pip install -e ".[dev]" && pytest
 ```
 
 Licensed under [Apache 2.0](https://github.com/decimal-labs/agentversion/blob/main/LICENSE).
+
+---
+
+[Docs](https://docs.decimal.ai) · [Registry](https://app.decimal.ai/skills) · [SDK](https://github.com/decimal-labs/decimalai-python) · [skillevaluation](https://github.com/decimal-labs/skillevaluation) · [regression-check](https://github.com/decimal-labs/regression-check)
