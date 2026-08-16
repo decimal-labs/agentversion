@@ -1,6 +1,6 @@
 ---
 title: "ADR 0001: AgentVersion Core Design"
-status: Accepted
+status: Accepted (one consequence superseded — see Consequences)
 date: 2026-03-10
 ---
 
@@ -55,7 +55,10 @@ The spec defines a taxonomy for assessing impact:
   - Surface-level diff engine
   - Compatibility classifier
   - CLI tool (`agentversion`)
-- The spec is in **alpha** status (v0.1). Breaking changes may occur until v1.0.
+- ~~The spec is in **alpha** status (v0.1). Breaking changes may occur until v1.0.~~
+  **Superseded:** `spec_version` was frozen at **1.0.0** before the first public release.
+  This line records the position at the time of the decision (2026-03-10); it is no longer
+  the status. See the README for the current guarantee.
 
 ## References
 

@@ -325,7 +325,7 @@ class Attestation(BaseModel):
     requires that attestations be well-formed and round-trip cleanly.
     """
 
-    signer: str  # e.g. "sigstore:github.com/decimalai/release-pipeline@main"
+    signer: str  # e.g. "sigstore:github.com/decimal-labs/agentversion@main"
     algorithm: str  # e.g. "cosign-rsa-sha256", "ssh-ed25519", "x509-rsa-pss-sha256"
     signature: str  # base64-encoded
     signed_payload_hash: str  # the canonical-hash value that was signed

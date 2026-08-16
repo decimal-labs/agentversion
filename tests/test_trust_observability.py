@@ -44,13 +44,13 @@ class TestAttestation:
         from agentversion.manifest import Attestation
 
         a = Attestation(
-            signer="sigstore:github.com/decimalai/ci@main",
+            signer="sigstore:github.com/decimal-labs/agentversion@main",
             algorithm="cosign-rsa-sha256",
             signature="MEUCIQDx9k",
             signed_payload_hash="sha256:47301b25",
             signed_at=datetime(2026, 5, 15, 10, 0, tzinfo=timezone.utc),
         )
-        assert a.signer == "sigstore:github.com/decimalai/ci@main"
+        assert a.signer == "sigstore:github.com/decimal-labs/agentversion@main"
         assert a.key_id is None
         assert a.expires_at is None
 

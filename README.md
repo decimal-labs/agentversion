@@ -117,7 +117,9 @@ A manifest is plain JSON. The top says *which* version this is; `contract` holds
 
 Each surface is hashed on its own, so the diff can say *"`tool_registry` changed, `prompt_stack` didn't"* instead of just *"the manifest changed."*
 
-> Try it yourself — both [`examples/manifest/`](https://github.com/decimal-labs/agentversion/tree/main/examples/manifest) manifests ship inside the `agentversion` wheel.
+> Try it yourself — both [`examples/manifest/`](https://github.com/decimal-labs/agentversion/tree/main/examples/manifest)
+> manifests ship inside the `agentversion` wheel as well as in the repo; the commands below use the
+> repo-relative paths, so clone first.
 
 ---
 
@@ -170,9 +172,11 @@ agentversion hash manifest.json       # a content hash that ignores key order an
 agentversion validate manifest.json   # check it against the spec
 ```
 
-**3. Diff two versions** — runnable right now against the bundled examples (`--compat` adds the keep/repair/replay/drop recommendation; `--json` for machine output):
+**3. Diff two versions** — against the bundled examples. The paths are relative, so run this from a
+checkout (`--compat` adds the keep/repair/replay/drop recommendation; `--json` for machine output):
 
 ```bash
+git clone https://github.com/decimal-labs/agentversion && cd agentversion
 agentversion diff examples/manifest/finance-agent-v1.json \
                   examples/manifest/finance-agent-v2.json --compat
 ```

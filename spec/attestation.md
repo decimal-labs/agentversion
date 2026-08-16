@@ -18,7 +18,7 @@ Attestations fix that. Each entry in `identity.attestations[]` is a signature ov
     "overall_hash": "sha256:47301b25…",
     "attestations": [
       {
-        "signer":              "sigstore:github.com/decimalai/ci-pipeline@.github/workflows/release.yml",
+        "signer":              "sigstore:github.com/decimal-labs/agentversion@.github/workflows/release.yml",
         "algorithm":           "cosign-rsa-sha256",
         "signature":           "MEUCIQDx9k…",
         "signed_payload_hash": "sha256:47301b25…",

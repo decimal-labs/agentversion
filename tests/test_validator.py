@@ -159,7 +159,7 @@ class TestAttestationLinkage:
 
     def _att(self, payload_hash: str) -> dict:
         return {
-            "signer": "sigstore:github.com/decimalai/release@main",
+            "signer": "sigstore:github.com/decimal-labs/agentversion@main",
             "algorithm": "cosign-rsa-sha256",
             "signature": "ZmFrZQ==",  # base64 'fake' — the bytes are NOT verified here, by design
             "signed_payload_hash": payload_hash,
