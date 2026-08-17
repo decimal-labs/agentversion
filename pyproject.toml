@@ -26,7 +26,11 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "pydantic>=2.0",
+    # 2.1 is the real floor: this package declares `model_config_hash`, which sits
+    # in pydantic's protected `model_` namespace. 2.0 raises NameError on it at
+    # class-definition time; 2.1 downgraded that to a warning. Verified 2026-08-17
+    # by the floors CI job, which failed on exactly this.
+    "pydantic>=2.1",
     "click>=8.0",
     "rich>=13.0",
     # Upper-pinned: jcs does the RFC 8785 canonicalization that every overall_hash
