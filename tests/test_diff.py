@@ -227,6 +227,66 @@ class TestPromptSeverity:
         assert sev == "major"
         assert pct > 30
 
+    # difflib's "autojunk" heuristic ignores every character that makes up more
+    # than 1% of a text of 200+ characters, which in prose is nearly every
+    # letter. A one-word edit to a 217-character prompt then read 33% changed,
+    # and to a 1,320-character one 99.2% — every real prompt edit graded major.
+    _SUPPORT_PROMPT = (
+        "You are the order-support agent for an online store. Look up the order with "
+        "lookup_order before you answer anything about it. Be concise and friendly. "
+        "Never promise a refund; tell the customer a person will review it."
+    )
+
+    def test_one_word_edit_to_a_realistic_prompt_is_minor(self):
+        from agentversion.diff import prompt_severity
+        tweaked = self._SUPPORT_PROMPT.replace("concise and friendly", "concise and warm")
+        sev, pct = prompt_severity(self._SUPPORT_PROMPT, tweaked)
+        assert sev == "minor", pct
+        assert pct < 5
+
+    def test_one_word_edit_to_a_long_prompt_is_minor(self):
+        from agentversion.diff import prompt_severity
+        long_prompt = "\n".join(
+            f"{i}. {self._SUPPORT_PROMPT}" for i in range(1, 7)
+        )
+        assert len(long_prompt) > 1200
+        sev, pct = prompt_severity(long_prompt, long_prompt.replace("friendly", "warm", 1))
+        assert sev == "minor", pct
+        assert pct < 1
+
+    def test_added_paragraph_is_moderate(self):
+        from agentversion.diff import prompt_severity
+        added = self._SUPPORT_PROMPT + (
+            " If the order shipped more than ten days ago, apologise and offer to open a trace."
+        )
+        sev, pct = prompt_severity(self._SUPPORT_PROMPT, added)
+        assert sev == "moderate", pct
+
+    def test_rewrite_of_a_realistic_prompt_is_major(self):
+        from agentversion.diff import prompt_severity
+        sev, pct = prompt_severity(
+            self._SUPPORT_PROMPT,
+            "You handle shipping questions only. Reply in exactly two sentences, quote "
+            "the tracking number, and hand anything about money to the billing team.",
+        )
+        assert sev == "major", pct
+
+    def test_identical_prompts_are_unchanged(self):
+        from agentversion.diff import prompt_severity
+        assert prompt_severity(self._SUPPORT_PROMPT, self._SUPPORT_PROMPT) == ("minor", 0.0)
+
+    def test_large_prompt_is_graded_quickly(self):
+        import time
+
+        from agentversion.diff import prompt_severity
+        words = [f"word{i % 997}" for i in range(6000)]  # ~50k characters
+        old = " ".join(words)
+        new = " ".join(words[:3000] + ["inserted"] * 20 + words[3000:])
+        start = time.perf_counter()
+        sev, pct = prompt_severity(old, new)
+        assert sev == "minor", pct
+        assert time.perf_counter() - start < 2.0
+
 
 class TestModelSeverity:
     def test_config_only_is_minor(self):

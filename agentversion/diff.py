@@ -70,6 +70,64 @@ def _max_severity(*levels: Severity) -> Severity:
 # ── Per-surface severity classifiers ────────────────────
 
 
+_PROMPT_TOKEN_RE = re.compile(r"\w+|[^\w\s]+")
+# Past this many tokens on both sides of one changed stretch, let difflib skip
+# its most frequent tokens again (autojunk): an unbroken run that long is rare
+# in a prompt, and without it a repetitive one costs seconds per comparison.
+_PROMPT_REGION_AUTOJUNK_AT = 4000
+
+
+def _matched_chars(old_tokens: list[str], new_tokens: list[str]) -> int:
+    autojunk = len(old_tokens) + len(new_tokens) > _PROMPT_REGION_AUTOJUNK_AT
+    matcher = difflib.SequenceMatcher(None, old_tokens, new_tokens, autojunk=autojunk)
+    return sum(
+        len(token)
+        for block in matcher.get_matching_blocks()
+        for token in old_tokens[block.a:block.a + block.size]
+    )
+
+
+def _prompt_diff_pct(old_text: str, new_text: str) -> float:
+    """Percent of the prompt's text that changed, 0-100.
+
+    Measured on words and punctuation, weighted by their characters, so
+    re-wrapping or re-indenting a prompt changes nothing and a one-word edit
+    counts about that word's share of the text. Lines are aligned first, which
+    is cheap (lines are nearly all distinct) and keeps a long prompt's edits
+    from being matched against the wrong copy of a repeated phrase; words are
+    then compared only inside the lines that changed.
+
+    It used to be ``difflib.SequenceMatcher(None, old, new).ratio()`` over
+    characters. SequenceMatcher's default "autojunk" ignores every element
+    that makes up more than 1% of a sequence of 200 or more, which in prose is
+    nearly every letter: a one-word edit to a 217-character prompt read 33%
+    changed and to a 1,320-character one 99.2%, so every edit to a real
+    prompt graded major.
+    """
+    old_lines = [_PROMPT_TOKEN_RE.findall(line) for line in old_text.splitlines()]
+    new_lines = [_PROMPT_TOKEN_RE.findall(line) for line in new_text.splitlines()]
+    old_lines = [tokens for tokens in old_lines if tokens]
+    new_lines = [tokens for tokens in new_lines if tokens]
+    total = sum(len(t) for line in old_lines for t in line) + sum(
+        len(t) for line in new_lines for t in line
+    )
+    if old_lines == new_lines or not total:
+        return 0.0
+    old_keys = ["\x00".join(line) for line in old_lines]
+    new_keys = ["\x00".join(line) for line in new_lines]
+    matched = 0
+    lines = difflib.SequenceMatcher(None, old_keys, new_keys, autojunk=False)
+    for tag, i1, i2, j1, j2 in lines.get_opcodes():
+        if tag == "equal":
+            matched += sum(len(t) for line in old_lines[i1:i2] for t in line)
+        elif tag == "replace":
+            matched += _matched_chars(
+                [t for line in old_lines[i1:i2] for t in line],
+                [t for line in new_lines[j1:j2] for t in line],
+            )
+    return round((1 - 2 * matched / total) * 100, 1)
+
+
 def prompt_severity(old_text: str, new_text: str) -> tuple[Severity, float]:
     """Classify prompt change severity using text diff ratio.
 
@@ -81,10 +139,7 @@ def prompt_severity(old_text: str, new_text: str) -> tuple[Severity, float]:
     changes from hashes/versions alone (no inline text), so they do NOT call
     this — the ratio tiers here are not part of the manifest diff pipeline.
     """
-    if not old_text and not new_text:
-        return "minor", 0.0
-    ratio = difflib.SequenceMatcher(None, old_text, new_text).ratio()
-    diff_pct = round((1 - ratio) * 100, 1)
+    diff_pct = _prompt_diff_pct(old_text or "", new_text or "")
     if diff_pct <= 5:
         return "minor", diff_pct
     elif diff_pct <= 30:
