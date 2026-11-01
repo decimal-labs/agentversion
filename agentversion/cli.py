@@ -141,7 +141,9 @@ def init() -> None:
     provider = click.prompt("Model provider (e.g. openai, anthropic, google)", type=str)
     model = click.prompt("Model name (e.g. gpt-4o, claude-opus-4, gemini-2.0-flash)", type=str)
 
-    manifest = {
+    # Typed explicitly: since click 8.5 types `click.prompt` as returning str, mypy infers this literal
+    # as dict[str, Collection[str]] and rejects the nested lookups below.
+    manifest: dict[str, Any] = {
         "spec_version": SPEC_VERSION,
         "kind": "agent_manifest",
         "manifest_id": mint_id("agent_manifest"),
