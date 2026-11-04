@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 > **Package version ≠ spec version.** This file tracks the **package** version. The on-the-wire `spec_version` is independent and frozen at `1.0.0`; a pre-1.0 package can implement a stable 1.0 spec, which is exactly the situation today.
 
+## [Unreleased]
+
+### Changed
+- **Filling in a `model_runtime` value the old manifest never recorded is no longer a
+  change of it.** A blank `provider`, `model` or `tool_calling_mode` becoming known grades
+  `minor` and `non_breaking`. It used to read as a provider change: `major`, `breaking`.
+  A manifest that follows the spec always carries `provider` and `model`, so this affects
+  partial baselines only. Conformance scenarios and hash vectors are unchanged.
+
 ## [0.2.3] - 2026-08-14
 
 Packaging and documentation only. **No code, schema, or `spec_version` change** — the

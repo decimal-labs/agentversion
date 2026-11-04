@@ -156,6 +156,8 @@ def model_severity(
     - Same model, config tweak (temp/top_p) → minor
     - Version bump within same family → moderate
     - Provider or family change → major
+    - A provider, model or tool_calling_mode the old side never recorded being
+      filled in → minor. It says what was running; nothing changed.
     """
     details: list[str] = []
     severity: Severity = "minor"
@@ -165,10 +167,10 @@ def model_severity(
     old_model = str(old.get("model", ""))
     new_model = str(new.get("model", ""))
 
-    if old_provider != new_provider:
+    if old_provider and old_provider != new_provider:
         details.append(f"provider: {old_provider!r} → {new_provider!r}")
         severity = "major"
-    elif old_model != new_model:
+    elif old_model and old_model != new_model:
         # Check if same family (e.g. gpt-4o vs gpt-4o-mini)
         old_family = _extract_model_family(old_model)
         new_family = _extract_model_family(new_model)
@@ -178,13 +180,19 @@ def model_severity(
         else:
             details.append(f"model version: {old_model!r} → {new_model!r}")
             severity = "moderate"
+    else:
+        if old_provider != new_provider:
+            details.append(f"provider: {old_provider!r} → {new_provider!r}")
+        if old_model != new_model:
+            details.append(f"model: {old_model!r} → {new_model!r}")
 
     # tool_calling_mode lives at the top level of model_runtime.
     if old.get("tool_calling_mode") != new.get("tool_calling_mode"):
         details.append(
             f"tool_calling_mode: {old.get('tool_calling_mode')!r} → {new.get('tool_calling_mode')!r}"
         )
-        severity = _max_severity(severity, "moderate")
+        if old.get("tool_calling_mode"):
+            severity = _max_severity(severity, "moderate")
 
     # Generation params are nested under generation_config (not top-level).
     old_gc = old.get("generation_config") or {}
@@ -731,7 +739,7 @@ def _adapt_model_runtime(old: dict[str, Any], new: dict[str, Any]) -> tuple[
     Literal["breaking", "non_breaking"], Severity, list[str]
 ]:
     sev, details = model_severity(old, new)
-    is_breaking = any(old.get(k) != new.get(k) for k in _BREAKING_MODEL_FIELDS)
+    is_breaking = any(old.get(k) and old.get(k) != new.get(k) for k in _BREAKING_MODEL_FIELDS)
     return ("breaking" if is_breaking else "non_breaking"), sev, details
 
 

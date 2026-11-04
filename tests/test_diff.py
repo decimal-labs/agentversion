@@ -314,6 +314,31 @@ class TestModelSeverity:
         )
         assert sev == "major"
 
+    def test_filling_in_what_was_never_recorded_is_minor(self):
+        # A baseline made before the agent first ran has no model on it.
+        from agentversion.diff import model_severity
+        sev, details = model_severity(
+            {}, {"provider": "openai", "model": "gpt-4o", "tool_calling_mode": "auto"},
+        )
+        assert sev == "minor"
+        assert details == [
+            "provider: '' → 'openai'",
+            "model: '' → 'gpt-4o'",
+            "tool_calling_mode: None → 'auto'",
+        ]
+
+    def test_losing_a_recorded_provider_is_still_major(self):
+        from agentversion.diff import model_severity
+        sev, _ = model_severity(
+            {"provider": "openai", "model": "gpt-4o"}, {"model": "gpt-4o"},
+        )
+        assert sev == "major"
+
+    def test_a_blank_provider_does_not_hide_a_family_change(self):
+        from agentversion.diff import model_severity
+        sev, _ = model_severity({"model": "gpt-4o"}, {"provider": "google", "model": "gemini-2.0-flash"})
+        assert sev == "major"
+
     def test_tool_calling_mode_change_is_moderate(self):
         from agentversion.diff import model_severity
         sev, details = model_severity(
