@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-11-10
+
 ### Changed
 - **Filling in a `model_runtime` value the old manifest never recorded is no longer a
   change of it.** A blank `provider`, `model` or `tool_calling_mode` becoming known grades
