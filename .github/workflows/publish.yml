@@ -10,6 +10,12 @@ name: Publish to PyPI
 #   repo: agentversion
 #   workflow: publish.yml
 #   environment: pypi
+#
+# 2026-11-11: GitHub listed this workflow as "deleted" (since 2026-08-23) though this file
+# never left main, so a v0.2.4 release would have started no upload; `gh workflow enable`
+# refuses a deleted workflow. This edit is what makes GitHub register the file again. If a release
+# ever starts no "Publish to PyPI" run, check `gh api repos/decimal-labs/agentversion/
+# actions/workflows/publish.yml --jq .state` before anything else.
 
 on:
   release:
