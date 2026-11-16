@@ -139,7 +139,7 @@ def init() -> None:
     agent_name = click.prompt("Agent name", type=str)
     version_label = click.prompt("Version label", default="v1")
     provider = click.prompt("Model provider (e.g. openai, anthropic, google)", type=str)
-    model = click.prompt("Model name (e.g. gpt-4o, claude-opus-4, gemini-2.0-flash)", type=str)
+    model = click.prompt("Model name (e.g. gpt-5.4-mini, claude-haiku-5-5, gemini-3.5-flash)", type=str)
 
     # Typed explicitly: since click 8.5 types `click.prompt` as returning str, mypy infers this literal
     # as dict[str, Collection[str]] and rejects the nested lookups below.
